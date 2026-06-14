@@ -152,3 +152,35 @@ class PasteService:
             "top_languages": [{"language": lang, "count": count} for lang, count in top_langs]
         }
 
+
+async def cleanup_expired_pastes(db: AsyncSession = None):
+    own_session = db is None
+    if own_session:
+        from app.core.database import AsyncSessionLocal
+        db = AsyncSessionLocal()
+
+    try:
+        result = await db.execute(
+            select(Paste.id).where(
+                Paste.expires_at.isnot(None),
+                Paste.expires_at < datetime.utcnow(),
+            )
+        )
+        expired_ids = [row[0] for row in result.all()]
+
+        if not expired_ids:
+            return 0
+
+        for paste_id in expired_ids:
+            await redis_client.delete(f"paste:{paste_id}")
+
+        await db.execute(
+            Paste.__table__.delete().where(Paste.id.in_(expired_ids))
+        )
+        await db.commit()
+
+        return len(expired_ids)
+    finally:
+        if own_session:
+            await db.close()
+

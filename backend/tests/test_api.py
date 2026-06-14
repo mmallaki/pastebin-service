@@ -1,11 +1,13 @@
 import pytest
 import pytest_asyncio
+from datetime import datetime, timedelta
 from unittest.mock import AsyncMock, patch, MagicMock
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 
 from app.core import settings
 from app.core.database import Base, get_db
+from app.models import Paste
 import app.middleware.rate_limit as rate_limit_mod
 import app.services as services_mod
 from app.main import app
@@ -203,3 +205,33 @@ async def test_metrics(client):
     r = await client.get("/metrics")
     assert r.status_code == 200
     assert "http_requests_total" in r.text
+
+
+@pytest.mark.asyncio
+async def test_cleanup_removes_expired_pastes(client, db_session):
+    from app.services import cleanup_expired_pastes
+
+    # Create an expired paste directly in DB
+    expired = Paste(content="expired", language="text", expiration="10min",
+                    expires_at=datetime.utcnow() - timedelta(minutes=5))
+    db_session.add(expired)
+    await db_session.commit()
+    expired_id = expired.id
+
+    # Create a live paste
+    live = Paste(content="alive", language="text", expiration="never")
+    db_session.add(live)
+    await db_session.commit()
+    live_id = live.id
+
+    count = await cleanup_expired_pastes(db=db_session)
+    assert count == 1
+
+    # Expired should be gone
+    from sqlalchemy import select
+    r = await db_session.execute(select(Paste).where(Paste.id == expired_id))
+    assert r.scalar_one_or_none() is None
+
+    # Live should remain
+    r = await db_session.execute(select(Paste).where(Paste.id == live_id))
+    assert r.scalar_one_or_none() is not None

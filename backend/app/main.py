@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -7,15 +8,25 @@ from app.core.database import engine, Base
 from app.api.v1.routes import router as api_router
 from app.middleware.rate_limit import RateLimitMiddleware
 from app.middleware.metrics import MetricsMiddleware
+from app.services import cleanup_expired_pastes
+
+
+async def _cleanup_loop():
+    while True:
+        try:
+            await cleanup_expired_pastes()
+        except Exception:
+            pass
+        await asyncio.sleep(60)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    task = asyncio.create_task(_cleanup_loop())
     yield
-    # Shutdown
+    task.cancel()
     await engine.dispose()
 
 
