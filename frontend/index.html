@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pastebin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <a href="#" class="logo" onclick="showView('create')">Pastebin</a>
+        <div class="nav-links">
+            <a href="#" onclick="showView('create')">New Paste</a>
+            <a href="#" onclick="showView('list')">Recent</a>
+        </div>
+    </nav>
+
+    <main id="app">
+        <section id="view-create" class="view active">
+            <h2>New Paste</h2>
+            <form id="create-form">
+                <input type="text" id="title" placeholder="Title (optional)" maxlength="255">
+                <div class="form-row">
+                    <select id="language"></select>
+                    <select id="expiration">
+                        <option value="never">Never</option>
+                        <option value="10min">10 Minutes</option>
+                        <option value="1hr">1 Hour</option>
+                        <option value="1day">1 Day</option>
+                        <option value="1week">1 Week</option>
+                    </select>
+                </div>
+                <textarea id="content" placeholder="Paste your code here..." rows="20" spellcheck="false"></textarea>
+                <button type="submit">Create Paste</button>
+            </form>
+        </section>
+
+        <section id="view-paste" class="view">
+            <div id="paste-header">
+                <h2 id="paste-title"></h2>
+                <div class="paste-meta">
+                    <span id="paste-lang" class="badge"></span>
+                    <span id="paste-date"></span>
+                    <span id="paste-views"></span>
+                    <button id="paste-delete" class="btn-danger" onclick="deletePaste()">Delete</button>
+                </div>
+            </div>
+            <pre><code id="paste-code"></code></pre>
+        </section>
+
+        <section id="view-list" class="view">
+            <h2>Recent Pastes</h2>
+            <div id="paste-list"></div>
+        </section>
+    </main>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
