@@ -49,9 +49,15 @@ class Settings(BaseSettings):
     def __init__(self, **values):
         super().__init__(**values)
         if not self.DATABASE_URL:
-            self.DATABASE_URL = (
-                f"sqlite+aiosqlite:///./pastebin.db"
-            )
+            if self.POSTGRES_SERVER != "localhost":
+                self.DATABASE_URL = (
+                    f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
+                    f"@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+                )
+            else:
+                self.DATABASE_URL = (
+                    f"sqlite+aiosqlite:///./pastebin.db"
+                )
 
 
 settings = Settings()
