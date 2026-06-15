@@ -72,6 +72,63 @@ async def root():
     return {"message": "Pastebin Service API", "docs": "/docs"}
 
 
+@app.get("/view/{share_key}")
+async def view_share(share_key: str):
+    from starlette.responses import HTMLResponse
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paste - {share_key}</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+<nav>
+<a href="/" class="logo">Pastebin</a>
+<div class="nav-links"><a href="/static/index.html">New Paste</a></div>
+</nav>
+<main id="app" style="max-width:960px;margin:0 auto;padding:24px">
+<div id="loading" class="empty-state">Loading paste...</div>
+<div id="paste-view" style="display:none">
+<h2 id="paste-title"></h2>
+<div class="paste-meta">
+<span id="paste-lang" class="badge"></span>
+<span id="paste-date"></span>
+<span id="paste-views"></span>
+</div>
+<pre><code id="paste-code"></code></pre>
+</div>
+<div id="not-found" style="display:none" class="empty-state">Paste not found or expired.</div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+fetch('/api/v1/view/{share_key}')
+  .then(r => {{ if (!r.ok) throw new Error(); return r.json(); }})
+  .then(p => {{
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('paste-view').style.display = 'block';
+    document.getElementById('paste-title').textContent = p.title || 'Untitled';
+    document.getElementById('paste-lang').textContent = p.language;
+    document.getElementById('paste-date').textContent = new Date(p.created_at).toLocaleString();
+    document.getElementById('paste-views').textContent = p.views + ' views';
+    const code = document.getElementById('paste-code');
+    code.textContent = p.content;
+    code.className = 'language-' + p.language;
+    if (window.hljs) hljs.highlightElement(code);
+    document.title = (p.title || 'Untitled') + ' - Pastebin';
+  }})
+  .catch(() => {{
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('not-found').style.display = 'block';
+  }});
+</script>
+</body>
+</html>"""
+    return HTMLResponse(content=html)
+
+
 FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
 if FRONTEND_DIR.is_dir():
     app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
