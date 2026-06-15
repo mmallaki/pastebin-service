@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 from typing import List
 
 
@@ -30,10 +31,7 @@ class Settings(BaseSettings):
     # Monitoring
     PROMETHEUS_ENABLED: bool = True
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
-        extra = "ignore"
+    model_config = ConfigDict(env_file=".env", case_sensitive=True, extra="ignore")
 
     def __init__(self, **values):
         super().__init__(**values)

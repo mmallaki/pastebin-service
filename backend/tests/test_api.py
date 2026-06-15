@@ -1,6 +1,6 @@
 import pytest
 import redis.asyncio as aioredis
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 
@@ -202,7 +202,7 @@ async def test_cleanup_removes_expired_pastes(db_session):
     from sqlalchemy import select
 
     expired = Paste(content="expired", language="text", expiration="10min",
-                    expires_at=datetime.utcnow() - timedelta(minutes=5))
+                    expires_at=datetime.now(timezone.utc) - timedelta(minutes=5))
     db_session.add(expired)
     await db_session.commit()
     expired_id = expired.id
