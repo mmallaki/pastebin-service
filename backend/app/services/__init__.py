@@ -1,10 +1,10 @@
-from sqlalchemy import select, func, and_, or_
+from sqlalchemy import select, func, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta, timezone
 import json
 
 from app.models import Paste
-from app.schemas import PasteCreate, PasteUpdate
+from app.schemas import PasteCreate
 from app.core.database import redis_client
 
 
@@ -20,13 +20,12 @@ class PasteService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def create_paste(self, paste_data: PasteCreate, ip_address: str = None) -> Paste:
+    async def create_paste(self, paste_data: PasteCreate) -> Paste:
         paste = Paste(
             title=paste_data.title,
             content=paste_data.content,
             language=paste_data.language,
             expiration=paste_data.expiration.value,
-            is_private=paste_data.is_private,
         )
 
         if paste_data.expiration != "never":
@@ -35,12 +34,6 @@ class PasteService:
         self.db.add(paste)
         await self.db.commit()
         await self.db.refresh(paste)
-
-        await redis_client.setex(
-            f"paste:{paste.id}",
-            300,
-            json.dumps(paste.to_dict())
-        )
 
         return paste
 
@@ -93,33 +86,6 @@ class PasteService:
             return True
 
         return False
-
-    async def update_paste(self, paste_id: str, paste_data: PasteUpdate) -> Paste | None:
-        result = await self.db.execute(
-            select(Paste).where(Paste.id == paste_id)
-        )
-        paste = result.scalar_one_or_none()
-
-        if not paste:
-            return None
-
-        update_data = paste_data.model_dump(exclude_unset=True)
-        for field, value in update_data.items():
-            if field == "expiration" and value is not None:
-                paste.expiration = value.value
-                if value.value == "never":
-                    paste.expires_at = None
-                else:
-                    paste.expires_at = datetime.now(datetime.UTC) + self.EXPIRATION_MAP[value.value]
-            else:
-                setattr(paste, field, value)
-
-        await self.db.commit()
-        await self.db.refresh(paste)
-
-        await redis_client.delete(f"paste:{paste.id}")
-
-        return paste
 
     async def list_pastes(
         self,

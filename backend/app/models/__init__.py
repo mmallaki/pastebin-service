@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Text, DateTime, Integer, Boolean, Index
+from sqlalchemy import Column, String, Text, DateTime, Integer, Index
 from sqlalchemy.sql import func
 import uuid
 import secrets
@@ -21,7 +21,6 @@ class Paste(Base):
     content = Column(Text, nullable=False)
     language = Column(String(50), default="text")
     expiration = Column(String(20), default="never")
-    is_private = Column(Boolean, default=False)
     views = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
@@ -44,7 +43,6 @@ class Paste(Base):
             "content": self.content,
             "language": self.language,
             "expiration": self.expiration,
-            "is_private": self.is_private,
             "views": self.views,
             "created_at": _fmt(self.created_at),
             "updated_at": _fmt(self.updated_at),

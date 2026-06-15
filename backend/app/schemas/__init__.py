@@ -17,14 +17,6 @@ class PasteCreate(BaseModel):
     content: str = Field(..., min_length=1, max_length=1048576)
     language: str = Field("text", max_length=50)
     expiration: ExpirationType = ExpirationType.NEVER
-    is_private: bool = False
-
-
-class PasteUpdate(BaseModel):
-    title: Optional[str] = Field(None, max_length=255)
-    content: Optional[str] = Field(None, min_length=1, max_length=1048576)
-    language: Optional[str] = Field(None, max_length=50)
-    expiration: Optional[ExpirationType] = None
 
 
 class PasteResponse(BaseModel):
@@ -34,14 +26,10 @@ class PasteResponse(BaseModel):
     content: str
     language: str
     expiration: str
-    is_private: bool
     views: int
     created_at: datetime
     updated_at: datetime
     expires_at: Optional[datetime]
-
-    class Config:
-        from_attributes = True
 
 
 class PasteListResponse(BaseModel):

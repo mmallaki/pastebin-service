@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 
 from app.core.database import get_db
 from app.schemas import (
-    PasteCreate, PasteUpdate, PasteResponse,
+    PasteCreate, PasteResponse,
     PasteListResponse, StatsResponse
 )
 from app.services import PasteService
@@ -15,14 +15,10 @@ router = APIRouter()
 @router.post("/pastes", response_model=PasteResponse, status_code=201)
 async def create_paste(
     paste_data: PasteCreate,
-    request: Request,
     db: AsyncSession = Depends(get_db)
 ):
     service = PasteService(db)
-    paste = await service.create_paste(
-        paste_data,
-        ip_address=request.client.host
-    )
+    paste = await service.create_paste(paste_data)
     return paste.to_dict()
 
 
@@ -66,21 +62,6 @@ async def delete_paste(
         raise HTTPException(status_code=404, detail="Paste not found")
 
     return None
-
-
-@router.put("/pastes/{paste_id}", response_model=PasteResponse)
-async def update_paste(
-    paste_id: str,
-    paste_data: PasteUpdate,
-    db: AsyncSession = Depends(get_db)
-):
-    service = PasteService(db)
-    paste = await service.update_paste(paste_id, paste_data)
-
-    if not paste:
-        raise HTTPException(status_code=404, detail="Paste not found")
-
-    return paste.to_dict()
 
 
 @router.get("/pastes", response_model=PasteListResponse)
