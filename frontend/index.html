@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0d1117">
     <title>Pastebin</title>
-    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 </head>
 <body>
@@ -47,17 +47,12 @@
                 <span id="paste-date"></span>
                 <span id="paste-views"></span>
             </div>
-            <div class="share-row">
-                <code id="paste-share-key"></code>
-                <button class="sm" onclick="copyKey()">Copy Key</button>
-                <button class="sm" onclick="copyLink()">Copy Link</button>
-            </div>
-            <input type="text" id="paste-share-url" readonly onclick="this.select();copyLink()">
             <div class="sunken">
                 <pre><code id="paste-code"></code></pre>
             </div>
             <div class="row">
-                <button class="btn-secondary" onclick="startEdit()">Edit</button>
+                <button class="btn-copy" onclick="copyKey()">Copy Key</button>
+                <button class="btn-copy" onclick="copyLink()">Copy Link</button>
                 <button class="btn-danger" onclick="deletePaste()">Delete</button>
             </div>
         </div>
@@ -89,6 +84,6 @@
     </main>
     <div id="toast" class="toast"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="app.js?v=4"></script>
+    <script src="app.js?v=5"></script>
 </body>
 </html>

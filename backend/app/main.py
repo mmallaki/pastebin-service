@@ -82,7 +82,7 @@ async def view_share(share_key: str):
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#080c10">
 <title>Paste - {share_key}</title>
-<link rel="stylesheet" href="/static/style.css?v=3">
+<link rel="stylesheet" href="/static/style.css?v=5">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 </head>
 <body>
@@ -96,14 +96,12 @@ async def view_share(share_key: str):
 <span id="paste-date"></span>
 <span id="paste-views"></span>
 </div>
-<div class="share-row">
-<code id="paste-share-key"></code>
-<button class="sm" onclick="copyKey()">Copy Key</button>
-<button class="sm" onclick="copyLink()">Copy Link</button>
-</div>
-<input type="text" id="paste-share-url" readonly onclick="this.select();copyLink()" style="font-family:var(--mono);font-size:12px;color:var(--accent);cursor:pointer;margin-bottom:12px">
 <div class="sunken">
 <pre><code id="paste-code"></code></pre>
+</div>
+<div class="row">
+<button class="btn-copy" onclick="copyKey()">Copy Key</button>
+<button class="btn-copy" onclick="copyLink()">Copy Link</button>
 </div>
 </div>
 <div id="not-found" style="display:none;text-align:center;padding:40px 16px">
@@ -142,9 +140,7 @@ fetch('/api/v1/view/' + SHARE_KEY)
     document.getElementById('paste-title').textContent = p.title || 'Untitled';
     document.getElementById('paste-lang').textContent = p.language;
     document.getElementById('paste-date').textContent = new Date(p.created_at).toLocaleString();
-    document.getElementById('paste-views').textContent = p.views + ' views';
-    document.getElementById('paste-share-key').textContent = p.share_key;
-    document.getElementById('paste-share-url').value = location.href;
+    document.getElementById('paste-views').textContent = p.views + ' view' + (p.views !== 1 ? 's' : '');
     const code = document.getElementById('paste-code');
     code.textContent = p.content;
     code.className = 'language-' + p.language;

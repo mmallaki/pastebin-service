@@ -44,6 +44,7 @@ function onHash() {
 }
 
 function go(name) {
+    if (name === 'home') currentShareKey = null;
     location.hash = name;
 }
 
@@ -142,20 +143,18 @@ function startEdit() {
 
 function viewPaste(id) {
     currentPasteId = id;
-    fetch(`${API}/pastes/${id}`).then(r => r.json()).then(p => {
-        currentShareKey = p.share_key;
-        document.getElementById('paste-title').textContent = p.title || 'Untitled';
-        document.getElementById('paste-lang').textContent = p.language;
-        document.getElementById('paste-date').textContent = fmtDate(p.created_at);
-        document.getElementById('paste-views').textContent = p.views + ' view' + (p.views !== 1 ? 's' : '');
-        document.getElementById('paste-share-key').textContent = p.share_key;
-        document.getElementById('paste-share-url').value = location.origin + '/view/' + p.share_key;
-        const c = document.getElementById('paste-code');
-        c.textContent = p.content;
-        c.className = 'language-' + p.language;
-        if (window.hljs) hljs.highlightElement(c);
-        show('paste');
-    }).catch(() => { showToast('Not found'); go('home'); });
+    if (currentShareKey) {
+        fetch(`${API}/view/${currentShareKey}`).then(r => r.json()).then(p => {
+            renderPaste(p);
+            show('paste');
+        }).catch(() => { showToast('Not found'); go('home'); });
+    } else {
+        fetch(`${API}/pastes/${id}`).then(r => r.json()).then(p => {
+            currentShareKey = p.share_key;
+            renderPaste(p);
+            show('paste');
+        }).catch(() => { showToast('Not found'); go('home'); });
+    }
 }
 
 function copyToClipboard(text) {

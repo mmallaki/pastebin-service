@@ -133,6 +133,8 @@ button:active{transform:scale(.98)}
 .btn-secondary:hover{border-color:var(--dim);color:var(--text)}
 .btn-danger{background:transparent;color:var(--danger);border:1px solid var(--danger)}
 .btn-danger:hover{background:var(--danger);color:#fff}
+.btn-copy{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn-copy:hover{background:var(--accent);color:#fff}
 .sm{width:auto;padding:4px 10px;font-size:11px;background:var(--bg2);color:var(--dim);border:1px solid var(--border)}
 .sm:hover{border-color:var(--accent);color:var(--accent)}
 
