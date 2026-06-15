@@ -151,8 +151,8 @@ h2{font-size:18px;font-weight:600;margin-bottom:6px;word-break:break-word}
 
 /* Lookup */
 .lookup-row{display:flex;gap:8px;margin-bottom:12px}
-.lookup-row input{flex:1;font-family:var(--mono);font-size:18px;letter-spacing:2px;text-align:center}
-.lookup-row button{width:auto;padding:10px 24px;font-size:14px}
+.lookup-row input{flex:1;font-family:var(--mono);font-size:16px;letter-spacing:1px;text-align:center;padding:8px 12px}
+.lookup-row button{width:auto;padding:8px 18px;font-size:13px}
 
 /* Toast */
 .toast{
@@ -178,7 +178,10 @@ h2{font-size:18px;font-weight:600;margin-bottom:6px;word-break:break-word}
   .share-row{flex-direction:column;align-items:flex-start}
   .share-row .sm{margin-left:0}
   .lookup-row{flex-direction:column}
-  .lookup-row button{width:100%}
+  .lookup-row input{font-size:16px;max-width:100%}
+  .lookup-row button{width:100%;padding:10px}
+  .paste-actions{flex-direction:column}
+  .paste-actions button{width:100%}
 }
 @supports(padding-top:env(safe-area-inset-top)){
   .toast{bottom:max(20px,env(safe-area-inset-bottom))}

@@ -53,7 +53,11 @@ function show(name) {
     if (el) el.classList.add('active');
 
     if (name === 'create') setTimeout(() => document.getElementById('content')?.focus(), 100);
-    if (name === 'lookup') setTimeout(() => document.getElementById('lookup-key')?.focus(), 100);
+    if (name === 'lookup') {
+        document.getElementById('lookup-key').value = '';
+        document.getElementById('lookup-result').innerHTML = '';
+        setTimeout(() => document.getElementById('lookup-key')?.focus(), 100);
+    }
 }
 
 async function handleCreate(e) {
