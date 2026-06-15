@@ -64,11 +64,8 @@ class PasteService:
             await self.db.commit()
             await self.db.refresh(paste)
 
-            await redis_client.setex(
-                f"paste:{paste.id}",
-                300,
-                json.dumps(paste.to_dict())
-            )
+            paste_dict = paste.to_dict()
+            await redis_client.setex(f"paste:{paste.id}", 300, json.dumps(paste_dict))
 
         return paste
 
@@ -78,11 +75,13 @@ class PasteService:
             paste_data = json.loads(cached)
             paste_id = paste_data.get("id")
             if paste_id:
-                await self.db.execute(
-                    Paste.__table__.update().where(Paste.id == paste_id).values(views=Paste.views + 1)
+                result = await self.db.execute(
+                    Paste.__table__.update().where(Paste.id == paste_id).values(views=Paste.views + 1).returning(Paste.views)
                 )
+                new_views = result.scalar()
                 await self.db.commit()
-                paste_data["views"] = paste_data.get("views", 0) + 1
+                paste_data["views"] = new_views
+                await redis_client.setex(f"share:{share_key}", 300, json.dumps(paste_data))
             return Paste(**paste_data)
 
         result = await self.db.execute(
