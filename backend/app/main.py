@@ -1,3 +1,5 @@
+"""FastAPI application entrypoint — sets up middleware, routes, and background tasks."""
+
 import asyncio
 from pathlib import Path
 from fastapi import FastAPI
@@ -14,6 +16,7 @@ from app.services import cleanup_expired_pastes
 
 
 async def _cleanup_loop():
+    """Background task that deletes expired pastes every 60 seconds."""
     while True:
         try:
             await cleanup_expired_pastes()
@@ -24,6 +27,7 @@ async def _cleanup_loop():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Startup: create DB tables. Shutdown: cancel cleanup task, dispose engine."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     task = asyncio.create_task(_cleanup_loop())
@@ -74,6 +78,7 @@ async def root():
 
 @app.get("/view/{share_key}")
 async def view_share(share_key: str):
+    """Serve a standalone HTML page for sharing pastes via short URL."""
     from starlette.responses import HTMLResponse
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -157,6 +162,7 @@ fetch('/api/v1/view/' + SHARE_KEY)
     return HTMLResponse(content=html)
 
 
+# Mount the frontend SPA at /static for development serving
 FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
 if FRONTEND_DIR.is_dir():
     app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")

@@ -1,3 +1,4 @@
+"""Application settings loaded from .env file with sensible defaults."""
 from pydantic_settings import BaseSettings
 from pydantic import ConfigDict
 from typing import List
@@ -35,6 +36,7 @@ class Settings(BaseSettings):
 
     def __init__(self, **values):
         super().__init__(**values)
+        # Use PostgreSQL when POSTGRES_SERVER is set (K8s/docker), SQLite for local dev
         if not self.DATABASE_URL:
             if self.POSTGRES_SERVER != "localhost":
                 self.DATABASE_URL = (

@@ -1,3 +1,5 @@
+"""REST API endpoints for paste CRUD, sharing, stats, and metadata."""
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional

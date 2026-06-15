@@ -1,3 +1,5 @@
+"""Per-IP sliding window rate limiter using Redis counters."""
+
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -8,6 +10,9 @@ from app.core import settings
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
+    """Tracks per-IP request counts in Redis. Returns 429 when limits exceeded.
+    Bypasses /health and /metrics so probes aren't counted."""
+
     async def dispatch(self, request: Request, call_next):
         if request.url.path in ("/health", "/metrics"):
             return await call_next(request)

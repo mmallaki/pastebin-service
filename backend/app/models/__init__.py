@@ -1,3 +1,5 @@
+"""Paste database model with share key generation."""
+
 from sqlalchemy import Column, String, Text, DateTime, Integer, Index
 from sqlalchemy.sql import func
 import uuid
@@ -8,6 +10,7 @@ from app.core.database import Base
 
 
 def generate_share_key():
+    """Generate an 8-char alphanumeric key for paste sharing."""
     alphabet = string.ascii_lowercase + string.digits
     return ''.join(secrets.choice(alphabet) for _ in range(8))
 

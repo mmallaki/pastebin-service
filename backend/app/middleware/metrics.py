@@ -1,3 +1,5 @@
+"""Prometheus metrics middleware — tracks request count and latency."""
+
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 import time
@@ -21,18 +23,12 @@ if settings.PROMETHEUS_ENABLED:
 
 
 class MetricsMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app):
-        super().__init__(app)
-        self.request_count = 0
-        self.request_duration = 0
+    """Collects request count and latency for Prometheus monitoring."""
 
     async def dispatch(self, request: Request, call_next):
         start_time = time.time()
         response = await call_next(request)
         duration = time.time() - start_time
-
-        self.request_count += 1
-        self.request_duration += duration
 
         if settings.PROMETHEUS_ENABLED:
             REQUEST_COUNT.labels(

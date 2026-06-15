@@ -1,3 +1,5 @@
+"""Database engine, session factory, and Redis client for the application."""
+
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 import redis.asyncio as redis
@@ -6,9 +8,11 @@ from app.core import settings
 
 
 class Base(DeclarativeBase):
+    """SQLAlchemy declarative base — all models inherit from this."""
     pass
 
 
+# SQLite requires check_same_thread=False for async access
 connect_args = {}
 if settings.DATABASE_URL.startswith("sqlite"):
     connect_args = {"check_same_thread": False}
@@ -16,7 +20,7 @@ if settings.DATABASE_URL.startswith("sqlite"):
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=False,
-    pool_pre_ping=True,
+    pool_pre_ping=True,  # validates connections before use
     connect_args=connect_args,
 )
 
@@ -28,6 +32,7 @@ AsyncSessionLocal = async_sessionmaker(
 
 
 async def get_db():
+    """FastAPI dependency — yields a DB session per request."""
     async with AsyncSessionLocal() as session:
         try:
             yield session
