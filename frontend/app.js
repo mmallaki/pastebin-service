@@ -1,5 +1,6 @@
 const API = '/api/v1';
 let currentPasteId = null;
+let searchTimer = null;
 
 const LANGUAGES = [
     'text', 'python', 'javascript', 'typescript', 'java', 'c', 'cpp',
@@ -17,6 +18,7 @@ function init() {
     });
 
     document.getElementById('create-form').addEventListener('submit', handleCreate);
+    document.getElementById('edit-form').addEventListener('submit', handleUpdate);
     showView('create');
 }
 
@@ -63,6 +65,58 @@ async function handleCreate(e) {
     }
 }
 
+async function handleUpdate(e) {
+    e.preventDefault();
+    if (!currentPasteId) return;
+    const btn = e.target.querySelector('button');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+
+    try {
+        const res = await fetch(`${API}/pastes/${currentPasteId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title: document.getElementById('edit-title').value || null,
+                content: document.getElementById('edit-content').value,
+                language: document.getElementById('edit-language').value,
+            }),
+        });
+
+        if (!res.ok) throw new Error('Failed to update');
+        showToast('Paste updated');
+        showView('paste');
+        viewPaste(currentPasteId);
+    } catch (err) {
+        showToast(err.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save';
+    }
+}
+
+function startEdit() {
+    if (!currentPasteId) return;
+    fetch(`${API}/pastes/${currentPasteId}`)
+        .then(r => r.json())
+        .then(paste => {
+            document.getElementById('edit-title').value = paste.title || '';
+            document.getElementById('edit-content').value = paste.content;
+
+            const langSelect = document.getElementById('edit-language');
+            langSelect.innerHTML = '';
+            LANGUAGES.forEach(lang => {
+                const opt = document.createElement('option');
+                opt.value = lang;
+                opt.textContent = lang;
+                if (lang === paste.language) opt.selected = true;
+                langSelect.appendChild(opt);
+            });
+
+            showView('edit');
+        });
+}
+
 async function viewPaste(id) {
     currentPasteId = id;
     showView('paste');
@@ -76,7 +130,14 @@ async function viewPaste(id) {
         document.getElementById('paste-lang').textContent = paste.language;
         document.getElementById('paste-date').textContent = formatDate(paste.created_at);
         document.getElementById('paste-views').textContent = `${paste.views} view${paste.views !== 1 ? 's' : ''}`;
-        document.getElementById('paste-code').textContent = paste.content;
+
+        const codeEl = document.getElementById('paste-code');
+        codeEl.textContent = paste.content;
+        codeEl.className = `language-${paste.language}`;
+
+        if (window.hljs) {
+            hljs.highlightElement(codeEl);
+        }
     } catch (err) {
         showToast(err.message);
         showView('list');
@@ -97,16 +158,25 @@ async function deletePaste() {
     }
 }
 
+function debounceSearch() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(loadList, 300);
+}
+
 async function loadList() {
     const container = document.getElementById('paste-list');
+    const query = document.getElementById('search-input')?.value?.trim() || '';
     container.innerHTML = '<div class="empty-state">Loading...</div>';
 
     try {
-        const res = await fetch(`${API}/pastes?per_page=50`);
+        let url = `${API}/pastes?per_page=50`;
+        if (query) url += `&search=${encodeURIComponent(query)}`;
+
+        const res = await fetch(url);
         const data = await res.json();
 
         if (data.pastes.length === 0) {
-            container.innerHTML = '<div class="empty-state">No pastes yet. Create one!</div>';
+            container.innerHTML = `<div class="empty-state">${query ? 'No pastes found' : 'No pastes yet. Create one!'}</div>`;
             return;
         }
 

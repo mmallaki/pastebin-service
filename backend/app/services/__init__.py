@@ -1,6 +1,6 @@
 from sqlalchemy import select, func, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 
 from app.models import Paste
@@ -30,7 +30,7 @@ class PasteService:
         )
 
         if paste_data.expiration != "never":
-            paste.expires_at = datetime.utcnow() + self.EXPIRATION_MAP[paste_data.expiration.value]
+            paste.expires_at = datetime.now(timezone.utc) + self.EXPIRATION_MAP[paste_data.expiration.value]
 
         self.db.add(paste)
         await self.db.commit()
@@ -59,7 +59,7 @@ class PasteService:
         paste = result.scalar_one_or_none()
 
         if paste:
-            if paste.expires_at and paste.expires_at < datetime.utcnow():
+            if paste.expires_at and paste.expires_at < datetime.now(timezone.utc):
                 await self.delete_paste(paste_id)
                 return None
 
@@ -88,6 +88,33 @@ class PasteService:
 
         return False
 
+    async def update_paste(self, paste_id: str, paste_data: PasteUpdate) -> Paste | None:
+        result = await self.db.execute(
+            select(Paste).where(Paste.id == paste_id)
+        )
+        paste = result.scalar_one_or_none()
+
+        if not paste:
+            return None
+
+        update_data = paste_data.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            if field == "expiration" and value is not None:
+                paste.expiration = value.value
+                if value.value == "never":
+                    paste.expires_at = None
+                else:
+                    paste.expires_at = datetime.now(datetime.UTC) + self.EXPIRATION_MAP[value.value]
+            else:
+                setattr(paste, field, value)
+
+        await self.db.commit()
+        await self.db.refresh(paste)
+
+        await redis_client.delete(f"paste:{paste.id}")
+
+        return paste
+
     async def list_pastes(
         self,
         page: int = 1,
@@ -98,7 +125,7 @@ class PasteService:
         query = select(Paste).where(
             or_(
                 Paste.expires_at.is_(None),
-                Paste.expires_at > datetime.utcnow()
+                Paste.expires_at > datetime.now(timezone.utc)
             )
         )
 
@@ -128,12 +155,12 @@ class PasteService:
             select(func.count(Paste.id)).where(
                 or_(
                     Paste.expires_at.is_(None),
-                    Paste.expires_at > datetime.utcnow()
+                    Paste.expires_at > datetime.now(timezone.utc)
                 )
             )
         )).scalar()
 
-        today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
         pastes_today = (await self.db.execute(
             select(func.count(Paste.id)).where(Paste.created_at >= today)
         )).scalar()
@@ -163,7 +190,7 @@ async def cleanup_expired_pastes(db: AsyncSession = None):
         result = await db.execute(
             select(Paste.id).where(
                 Paste.expires_at.isnot(None),
-                Paste.expires_at < datetime.utcnow(),
+                Paste.expires_at < datetime.now(timezone.utc),
             )
         )
         expired_ids = [row[0] for row in result.all()]

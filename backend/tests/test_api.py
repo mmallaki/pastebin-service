@@ -143,6 +143,21 @@ async def test_delete_paste_not_found(client):
     assert r.status_code == 404
 
 
+async def test_update_paste(client):
+    r = await client.post("/api/v1/pastes", json={"content": "original", "language": "text"})
+    paste_id = r.json()["id"]
+
+    r = await client.put(f"/api/v1/pastes/{paste_id}", json={"content": "updated", "title": "new title"})
+    assert r.status_code == 200
+    assert r.json()["content"] == "updated"
+    assert r.json()["title"] == "new title"
+
+
+async def test_update_paste_not_found(client):
+    r = await client.put("/api/v1/pastes/nonexistent", json={"content": "x"})
+    assert r.status_code == 404
+
+
 async def test_languages(client):
     r = await client.get("/api/v1/languages")
     assert r.status_code == 200

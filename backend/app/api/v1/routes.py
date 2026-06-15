@@ -55,6 +55,21 @@ async def delete_paste(
     return None
 
 
+@router.put("/pastes/{paste_id}", response_model=PasteResponse)
+async def update_paste(
+    paste_id: str,
+    paste_data: PasteUpdate,
+    db: AsyncSession = Depends(get_db)
+):
+    service = PasteService(db)
+    paste = await service.update_paste(paste_id, paste_data)
+
+    if not paste:
+        raise HTTPException(status_code=404, detail="Paste not found")
+
+    return paste.to_dict()
+
+
 @router.get("/pastes", response_model=PasteListResponse)
 async def list_pastes(
     page: int = Query(1, ge=1),

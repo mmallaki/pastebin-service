@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pastebin</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 </head>
 <body>
     <nav>
@@ -42,20 +43,40 @@
                     <span id="paste-lang" class="badge"></span>
                     <span id="paste-date"></span>
                     <span id="paste-views"></span>
+                    <button class="btn-secondary" onclick="startEdit()">Edit</button>
                     <button id="paste-delete" class="btn-danger" onclick="deletePaste()">Delete</button>
                 </div>
             </div>
             <pre><code id="paste-code"></code></pre>
         </section>
 
+        <section id="view-edit" class="view">
+            <h2>Edit Paste</h2>
+            <form id="edit-form">
+                <input type="text" id="edit-title" placeholder="Title (optional)" maxlength="255">
+                <div class="form-row">
+                    <select id="edit-language"></select>
+                </div>
+                <textarea id="edit-content" rows="20" spellcheck="false"></textarea>
+                <div class="form-row">
+                    <button type="submit">Save</button>
+                    <button type="button" class="btn-secondary" onclick="viewPaste(currentPasteId)">Cancel</button>
+                </div>
+            </form>
+        </section>
+
         <section id="view-list" class="view">
             <h2>Recent Pastes</h2>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search pastes..." oninput="debounceSearch()">
+            </div>
             <div id="paste-list"></div>
         </section>
     </main>
 
     <div id="toast" class="toast"></div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

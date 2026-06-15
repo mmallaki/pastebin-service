@@ -1,7 +1,7 @@
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 
 from app.core.database import redis_client
 from app.core import settings
@@ -13,7 +13,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         client_ip = request.client.host
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         minute_key = f"rate_limit:{client_ip}:{now.strftime('%Y%m%d%H%M')}"
         hour_key = f"rate_limit:{client_ip}:{now.strftime('%Y%m%d%H')}"
