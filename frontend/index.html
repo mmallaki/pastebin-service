@@ -4,113 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0d1117">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Pastebin</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 </head>
 <body>
     <main id="app">
-        <section id="view-home" class="view active">
-            <div class="hero">
-                <h1 class="hero-title">Pastebin</h1>
-                <p class="hero-desc">Share code, notes, and text snippets<br>with a simple link.</p>
-                <div class="hero-actions">
-                    <button onclick="navigateTo('create')">New Paste</button>
-                    <button class="btn-outline" onclick="navigateTo('lookup')">View Paste</button>
-                </div>
-            </div>
-        </section>
 
-        <section id="view-create" class="view">
-            <div class="page-header">
-                <button class="btn-back" onclick="goBack()">&larr; Back</button>
-                <h2>New Paste</h2>
+        <div id="page-home" class="page">
+            <div class="center-box">
+                <h1>Pastebin</h1>
+                <p>Share code and text snippets<br>with a simple link.</p>
+                <button onclick="go('create')">New Paste</button>
+                <button class="btn-outline" onclick="go('lookup')">View Paste</button>
             </div>
-            <div class="paste-box">
+        </div>
+
+        <div id="page-create" class="page">
+            <a class="back" href="#">&larr; Home</a>
+            <div class="sunken">
                 <textarea id="content" placeholder="Write or paste your code here..." rows="10" spellcheck="false"></textarea>
             </div>
-            <div class="editor-options">
-                <input type="text" id="title" placeholder="Title (optional)" maxlength="255">
-                <div class="form-row">
-                    <select id="language"></select>
-                    <select id="expiration">
-                        <option value="never">Never</option>
-                        <option value="10min">10 Minutes</option>
-                        <option value="1hr">1 Hour</option>
-                        <option value="1day">1 Day</option>
-                        <option value="1week">1 Week</option>
-                    </select>
-                </div>
-                <button type="submit" id="create-btn" onclick="handleCreate(event)">Create Paste</button>
+            <input type="text" id="title" placeholder="Title (optional)" maxlength="255">
+            <div class="row">
+                <select id="language"></select>
+                <select id="expiration">
+                    <option value="never">Never</option>
+                    <option value="10min">10 min</option>
+                    <option value="1hr">1 hour</option>
+                    <option value="1day">1 day</option>
+                    <option value="1week">1 week</option>
+                </select>
             </div>
-        </section>
+            <button id="create-btn" onclick="handleCreate(event)">Create Paste</button>
+        </div>
 
-        <section id="view-paste" class="view">
-            <div class="page-header">
-                <button class="btn-back" onclick="goBack()">&larr; Back</button>
-                <h2 id="paste-title"></h2>
-            </div>
-            <div class="paste-meta">
+        <div id="page-paste" class="page">
+            <a class="back" href="#">&larr; Home</a>
+            <h2 id="paste-title"></h2>
+            <div class="meta">
                 <span id="paste-lang" class="badge"></span>
                 <span id="paste-date"></span>
                 <span id="paste-views"></span>
             </div>
-            <div class="share-box">
-                <span class="share-label">Share:</span>
-                <code id="paste-share-key" class="share-key"></code>
-                <button class="btn-small" onclick="copyShareKey()">Copy Key</button>
-                <button class="btn-small" onclick="copyShareLink()">Copy Link</button>
+            <div class="share-row">
+                <code id="paste-share-key"></code>
+                <button class="sm" onclick="copyKey()">Copy Key</button>
+                <button class="sm" onclick="copyLink()">Copy Link</button>
             </div>
-            <div class="share-url-box">
-                <input type="text" id="paste-share-url" readonly onclick="this.select(); copyShareLink()">
-                <span class="share-url-hint">tap to copy</span>
-            </div>
-            <div class="paste-box">
+            <input type="text" id="paste-share-url" readonly onclick="this.select();copyLink()">
+            <div class="sunken">
                 <pre><code id="paste-code"></code></pre>
             </div>
-            <div class="paste-actions">
+            <div class="row">
                 <button class="btn-secondary" onclick="startEdit()">Edit</button>
                 <button class="btn-danger" onclick="deletePaste()">Delete</button>
             </div>
-        </section>
+        </div>
 
-        <section id="view-edit" class="view">
-            <div class="page-header">
-                <button class="btn-back" onclick="goBack()">&larr; Back</button>
-                <h2>Edit Paste</h2>
-            </div>
-            <div class="paste-box">
+        <div id="page-edit" class="page">
+            <a class="back" href="#">&larr; Home</a>
+            <h2>Edit</h2>
+            <div class="sunken">
                 <textarea id="edit-content" rows="10" spellcheck="false"></textarea>
             </div>
-            <div class="editor-options">
-                <input type="text" id="edit-title" placeholder="Title (optional)" maxlength="255">
-                <div class="form-row">
-                    <select id="edit-language"></select>
-                </div>
-                <button type="submit" onclick="handleUpdate(event)">Save</button>
-            </div>
-        </section>
+            <input type="text" id="edit-title" placeholder="Title" maxlength="255">
+            <select id="edit-language"></select>
+            <button onclick="handleUpdate(event)">Save</button>
+        </div>
 
-        <section id="view-lookup" class="view">
-            <div class="page-header">
-                <button class="btn-back" onclick="goBack()">&larr; Back</button>
+        <div id="page-lookup" class="page">
+            <a class="back" href="#">&larr; Home</a>
+            <div class="center-box" style="height:auto;padding-top:80px">
                 <h2>View Paste</h2>
-            </div>
-            <div class="paste-box">
-                <p class="lookup-hint">Enter a share key to view a paste</p>
-                <form id="lookup-form" class="lookup-form">
-                    <input type="text" id="lookup-key" placeholder="abc123xy" maxlength="8" autocomplete="off" autofocus>
+                <p>Enter a share key</p>
+                <form id="lookup-form" class="lookup-row">
+                    <input type="text" id="lookup-key" placeholder="abc123xy" maxlength="8" autofocus>
                     <button type="submit">View</button>
                 </form>
                 <div id="lookup-result"></div>
             </div>
-        </section>
+        </div>
+
     </main>
-
     <div id="toast" class="toast"></div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="app.js"></script>
 </body>
