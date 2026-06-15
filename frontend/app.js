@@ -148,7 +148,14 @@ function viewPaste(id) {
         return r.json();
     }).then(p => {
         currentShareKey = p.share_key;
-        renderPaste(p);
+        document.getElementById('paste-title').textContent = p.title || 'Untitled';
+        document.getElementById('paste-lang').textContent = p.language;
+        document.getElementById('paste-date').textContent = fmtDate(p.created_at);
+        document.getElementById('paste-views').textContent = p.views + ' view' + (p.views !== 1 ? 's' : '');
+        const c = document.getElementById('paste-code');
+        c.textContent = p.content;
+        c.className = 'language-' + p.language;
+        if (window.hljs) hljs.highlightElement(c);
         show('paste');
     }).catch(() => { showToast('Not found'); go('home'); });
 }
