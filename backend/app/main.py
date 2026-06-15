@@ -96,6 +96,12 @@ async def view_share(share_key: str):
 <span id="paste-date"></span>
 <span id="paste-views"></span>
 </div>
+<div class="share-row">
+<code id="paste-share-key"></code>
+<button class="sm" onclick="copyKey()">Copy Key</button>
+<button class="sm" onclick="copyLink()">Copy Link</button>
+</div>
+<input type="text" id="paste-share-url" readonly onclick="this.select();copyLink()" style="font-family:var(--mono);font-size:12px;color:var(--accent);cursor:pointer;margin-bottom:12px">
 <div class="sunken">
 <pre><code id="paste-code"></code></pre>
 </div>
@@ -104,7 +110,26 @@ async def view_share(share_key: str):
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script>
-fetch('/api/v1/view/{share_key}')
+const SHARE_KEY = '{share_key}';
+function copyToClipboard(text) {{
+  if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).catch(() => fbCopy(text));
+  else fbCopy(text);
+}}
+function fbCopy(text) {{
+  const t = document.createElement('textarea');
+  t.value = text; t.style.position = 'fixed'; t.style.left = '-9999px';
+  document.body.appendChild(t); t.select(); document.execCommand('copy');
+  document.body.removeChild(t);
+}}
+function copyKey() {{ copyToClipboard(SHARE_KEY); showToast('Copied'); }}
+function copyLink() {{ copyToClipboard(location.href); showToast('Link copied'); }}
+function showToast(msg) {{
+  let t = document.getElementById('toast');
+  if (!t) {{ t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; document.body.appendChild(t); }}
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}}
+fetch('/api/v1/view/' + SHARE_KEY)
   .then(r => {{ if (!r.ok) throw new Error(); return r.json(); }})
   .then(p => {{
     document.getElementById('loading').style.display = 'none';
@@ -113,6 +138,8 @@ fetch('/api/v1/view/{share_key}')
     document.getElementById('paste-lang').textContent = p.language;
     document.getElementById('paste-date').textContent = new Date(p.created_at).toLocaleString();
     document.getElementById('paste-views').textContent = p.views + ' views';
+    document.getElementById('paste-share-key').textContent = p.share_key;
+    document.getElementById('paste-share-url').value = location.href;
     const code = document.getElementById('paste-code');
     code.textContent = p.content;
     code.className = 'language-' + p.language;
