@@ -186,6 +186,7 @@ function renderPaste(paste) {
     document.getElementById('paste-date').textContent = formatDate(paste.created_at);
     document.getElementById('paste-views').textContent = `${paste.views} view${paste.views !== 1 ? 's' : ''}`;
     document.getElementById('paste-share-key').textContent = paste.share_key;
+    document.getElementById('paste-share-url').value = getShareUrl();
 
     const codeEl = document.getElementById('paste-code');
     codeEl.textContent = paste.content;
@@ -196,16 +197,40 @@ function renderPaste(paste) {
     }
 }
 
+function getShareUrl() {
+    if (!currentShareKey) return '';
+    return `${window.location.origin}/view/${currentShareKey}`;
+}
+
+function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+    } else {
+        fallbackCopy(text);
+    }
+}
+
+function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+}
+
 function copyShareKey() {
     if (!currentShareKey) return;
-    navigator.clipboard.writeText(currentShareKey);
+    copyToClipboard(currentShareKey);
     showToast('Share key copied');
 }
 
 function copyShareLink() {
-    if (!currentShareKey) return;
-    const url = `${window.location.origin}/view/${currentShareKey}`;
-    navigator.clipboard.writeText(url);
+    const url = getShareUrl();
+    if (!url) return;
+    copyToClipboard(url);
     showToast('Share link copied');
 }
 
