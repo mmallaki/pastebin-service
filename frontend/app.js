@@ -1,7 +1,6 @@
 const API = '/api/v1';
 let currentPasteId = null;
 let currentShareKey = null;
-let searchTimer = null;
 
 const LANGUAGES = [
     'text', 'python', 'javascript', 'typescript', 'java', 'c', 'cpp',
@@ -18,14 +17,12 @@ function init() {
         langSelect.appendChild(opt);
     });
 
-    document.getElementById('create-form').addEventListener('submit', handleCreate);
-    document.getElementById('edit-form').addEventListener('submit', handleUpdate);
     document.getElementById('lookup-form').addEventListener('submit', handleLookup);
 
     setupTabSupport('content');
     setupTabSupport('edit-content');
 
-    showView('create');
+    showView('home');
 }
 
 function setupTabSupport(id) {
@@ -46,13 +43,17 @@ function showView(name) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(`view-${name}`).classList.add('active');
 
-    if (name === 'list') loadList();
-    if (name === 'lookup') document.getElementById('lookup-key').focus();
+    if (name === 'create') {
+        setTimeout(() => document.getElementById('content').focus(), 100);
+    }
+    if (name === 'lookup') {
+        setTimeout(() => document.getElementById('lookup-key').focus(), 100);
+    }
 }
 
 async function handleCreate(e) {
     e.preventDefault();
-    const btn = e.target.querySelector('button');
+    const btn = document.getElementById('create-btn');
     btn.disabled = true;
     btn.textContent = 'Creating...';
 
@@ -89,9 +90,6 @@ async function handleCreate(e) {
 async function handleUpdate(e) {
     e.preventDefault();
     if (!currentPasteId) return;
-    const btn = e.target.querySelector('button');
-    btn.disabled = true;
-    btn.textContent = 'Saving...';
 
     try {
         const res = await fetch(`${API}/pastes/${currentPasteId}`, {
@@ -110,9 +108,6 @@ async function handleUpdate(e) {
         viewPaste(currentPasteId);
     } catch (err) {
         showToast(err.message);
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'Save';
     }
 }
 
@@ -127,7 +122,7 @@ async function handleLookup(e) {
     try {
         const res = await fetch(`${API}/view/${key}`);
         if (!res.ok) {
-            result.innerHTML = '<div class="empty-state">Paste not found. Check the key and try again.</div>';
+            result.innerHTML = '<div class="empty-state">Paste not found.</div>';
             return;
         }
         const paste = await res.json();
@@ -173,7 +168,7 @@ async function viewPaste(id) {
         renderPaste(paste);
     } catch (err) {
         showToast(err.message);
-        showView('list');
+        showView('home');
     }
 }
 
@@ -242,45 +237,9 @@ async function deletePaste() {
         const res = await fetch(`${API}/pastes/${currentPasteId}`, { method: 'DELETE' });
         if (!res.ok) throw new Error('Failed to delete');
         showToast('Paste deleted');
-        showView('list');
+        showView('home');
     } catch (err) {
         showToast(err.message);
-    }
-}
-
-function debounceSearch() {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(loadList, 300);
-}
-
-async function loadList() {
-    const container = document.getElementById('paste-list');
-    const query = document.getElementById('search-input')?.value?.trim() || '';
-    container.innerHTML = '<div class="empty-state">Loading...</div>';
-
-    try {
-        let url = `${API}/pastes?per_page=50`;
-        if (query) url += `&search=${encodeURIComponent(query)}`;
-
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (data.pastes.length === 0) {
-            container.innerHTML = `<div class="empty-state">${query ? 'No pastes found' : 'No pastes yet. Create one!'}</div>`;
-            return;
-        }
-
-        container.innerHTML = data.pastes.map(p => `
-            <a class="paste-item" href="#" onclick="viewPaste('${p.id}'); return false;">
-                <div class="paste-item-info">
-                    <span class="paste-item-title">${escapeHtml(p.title || 'Untitled')}</span>
-                    <span class="paste-item-meta">${formatDate(p.created_at)} &middot; ${p.views} view${p.views !== 1 ? 's' : ''}</span>
-                </div>
-                <span class="paste-item-lang">${p.share_key}</span>
-            </a>
-        `).join('');
-    } catch (err) {
-        container.innerHTML = '<div class="empty-state">Failed to load pastes</div>';
     }
 }
 

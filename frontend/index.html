@@ -12,18 +12,27 @@
 </head>
 <body>
     <nav>
-        <a href="#" class="logo" onclick="showView('create')">Pastebin</a>
+        <a href="#" class="logo" onclick="showView('home')">Pastebin</a>
         <div class="nav-links">
             <a href="#" onclick="showView('create')">New Paste</a>
-            <a href="#" onclick="showView('list')">Recent</a>
             <a href="#" onclick="showView('lookup')">View by Key</a>
         </div>
     </nav>
 
     <main id="app">
-        <section id="view-create" class="view active">
-            <h2>New Paste</h2>
-            <form id="create-form">
+        <section id="view-home" class="view active">
+            <div class="hero">
+                <h1 class="hero-title">Pastebin</h1>
+                <p class="hero-desc">Share code, notes, and text snippets with a simple link.</p>
+                <div class="hero-actions">
+                    <button onclick="showView('create')">New Paste</button>
+                    <button class="btn-outline" onclick="showView('lookup')">View Paste</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-create" class="view">
+            <div class="editor-box">
                 <input type="text" id="title" placeholder="Title (optional)" maxlength="255">
                 <div class="form-row">
                     <select id="language"></select>
@@ -35,9 +44,9 @@
                         <option value="1week">1 Week</option>
                     </select>
                 </div>
-                <textarea id="content" placeholder="Write or paste your code here... (Tab key works for indentation)" rows="20" spellcheck="false"></textarea>
-                <button type="submit">Create Paste</button>
-            </form>
+                <textarea id="content" placeholder="Write or paste your code here..." rows="16" spellcheck="false"></textarea>
+                <button type="submit" id="create-btn" onclick="handleCreate(event)">Create Paste</button>
+            </div>
         </section>
 
         <section id="view-paste" class="view">
@@ -63,40 +72,34 @@
                     <button class="btn-danger" onclick="deletePaste()">Delete</button>
                 </div>
             </div>
-            <pre><code id="paste-code"></code></pre>
+            <div class="editor-box">
+                <pre><code id="paste-code"></code></pre>
+            </div>
         </section>
 
         <section id="view-edit" class="view">
-            <h2>Edit Paste</h2>
-            <form id="edit-form">
+            <div class="editor-box">
                 <input type="text" id="edit-title" placeholder="Title (optional)" maxlength="255">
                 <div class="form-row">
                     <select id="edit-language"></select>
                 </div>
-                <textarea id="edit-content" rows="20" spellcheck="false"></textarea>
+                <textarea id="edit-content" rows="16" spellcheck="false"></textarea>
                 <div class="form-row">
-                    <button type="submit">Save</button>
-                    <button type="button" class="btn-secondary" onclick="viewPaste(currentPasteId)">Cancel</button>
+                    <button type="submit" onclick="handleUpdate(event)">Save</button>
+                    <button type="button" class="btn-outline" onclick="viewPaste(currentPasteId)">Cancel</button>
                 </div>
-            </form>
-        </section>
-
-        <section id="view-list" class="view">
-            <h2>Recent Pastes</h2>
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search pastes..." oninput="debounceSearch()">
             </div>
-            <div id="paste-list"></div>
         </section>
 
         <section id="view-lookup" class="view">
-            <h2>View Paste by Key</h2>
-            <p class="lookup-hint">Enter a share key to view a paste (e.g., <code>abc123xy</code>)</p>
-            <form id="lookup-form" class="lookup-form">
-                <input type="text" id="lookup-key" placeholder="Enter share key..." maxlength="8" autocomplete="off" autofocus>
-                <button type="submit">View</button>
-            </form>
-            <div id="lookup-result"></div>
+            <div class="editor-box">
+                <p class="lookup-hint">Enter a share key to view a paste</p>
+                <form id="lookup-form" class="lookup-form">
+                    <input type="text" id="lookup-key" placeholder="e.g. abc123xy" maxlength="8" autocomplete="off" autofocus>
+                    <button type="submit">View</button>
+                </form>
+                <div id="lookup-result"></div>
+            </div>
         </section>
     </main>
 

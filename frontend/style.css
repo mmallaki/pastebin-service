@@ -88,6 +88,82 @@ main {
     display: block;
 }
 
+/* Hero / Home */
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: 32px 16px;
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+}
+
+.hero-desc {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    max-width: 400px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.hero-actions button {
+    width: auto;
+    padding: 12px 32px;
+    font-size: 15px;
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.btn-outline:hover {
+    border-color: var(--text-secondary);
+    background: var(--bg-tertiary);
+}
+
+/* Editor Box — inset hollow look */
+.editor-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.editor-box input,
+.editor-box textarea,
+.editor-box select {
+    background: var(--bg-secondary);
+}
+
+.editor-box textarea {
+    min-height: 250px;
+    margin-bottom: 12px;
+}
+
+.editor-box .form-row {
+    margin-bottom: 0;
+}
+
+.editor-box button {
+    margin-top: 4px;
+}
+
+/* Form elements */
 h2 {
     font-size: 18px;
     margin-bottom: 12px;
@@ -117,7 +193,6 @@ textarea {
     resize: vertical;
     tab-size: 4;
     line-height: 1.6;
-    min-height: 250px;
 }
 
 textarea::placeholder {
@@ -145,15 +220,7 @@ select {
     min-width: 0;
 }
 
-#title {
-    margin-bottom: 0;
-}
-
-#content {
-    margin-bottom: 10px;
-    min-height: 300px;
-}
-
+/* Buttons */
 button {
     background: var(--accent);
     color: #fff;
@@ -202,6 +269,7 @@ button:active {
     color: var(--text);
 }
 
+/* Paste view */
 #paste-header {
     margin-bottom: 12px;
 }
@@ -229,10 +297,9 @@ button:active {
 }
 
 pre {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 12px;
+    background: transparent;
+    border: none;
+    padding: 0;
     overflow-x: auto;
     font-size: 13px;
     line-height: 1.5;
@@ -245,19 +312,12 @@ code {
     font-size: 13px;
 }
 
-.search-bar {
-    margin-bottom: 12px;
-}
-
-.search-bar input {
-    font-size: 16px;
-}
-
 .hljs {
     background: transparent !important;
     padding: 0 !important;
 }
 
+/* Share */
 .paste-actions {
     display: flex;
     gap: 6px;
@@ -343,23 +403,16 @@ code {
     white-space: nowrap;
 }
 
+/* Lookup */
 .lookup-hint {
     color: var(--text-secondary);
     margin-bottom: 12px;
     font-size: 13px;
 }
 
-.lookup-hint code {
-    background: var(--bg-tertiary);
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 12px;
-}
-
 .lookup-form {
     display: flex;
     gap: 8px;
-    margin-bottom: 20px;
 }
 
 .lookup-form input {
@@ -375,63 +428,7 @@ code {
     padding: 10px 20px;
 }
 
-#paste-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.paste-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-    text-decoration: none;
-    color: inherit;
-    gap: 8px;
-}
-
-.paste-item:hover,
-.paste-item:active {
-    border-color: var(--accent);
-}
-
-.paste-item-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-    flex: 1;
-}
-
-.paste-item-title {
-    font-weight: 500;
-    font-size: 13px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.paste-item-meta {
-    font-size: 11px;
-    color: var(--text-secondary);
-}
-
-.paste-item-lang {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-secondary);
-    white-space: nowrap;
-    background: var(--bg-tertiary);
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-
+/* Toast */
 .toast {
     position: fixed;
     bottom: 20px;
@@ -458,12 +455,12 @@ code {
 
 .empty-state {
     text-align: center;
-    padding: 32px 16px;
+    padding: 24px 16px;
     color: var(--text-secondary);
     font-size: 14px;
 }
 
-/* Mobile: < 640px */
+/* Mobile */
 @media (max-width: 640px) {
     nav {
         padding: 10px 12px;
@@ -478,8 +475,31 @@ code {
         padding: 12px;
     }
 
-    h2 {
-        font-size: 16px;
+    .hero-title {
+        font-size: 32px;
+    }
+
+    .hero-desc {
+        font-size: 14px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .hero-actions button {
+        width: 100%;
+    }
+
+    .editor-box {
+        padding: 12px;
+        border-radius: 6px;
+    }
+
+    .editor-box textarea {
+        min-height: 200px;
     }
 
     .form-row {
@@ -487,22 +507,13 @@ code {
         gap: 6px;
     }
 
-    .paste-meta {
-        gap: 4px;
-    }
-
     .share-box {
         flex-direction: column;
         align-items: flex-start;
-        gap: 6px;
     }
 
     .share-url-box {
         width: 100%;
-    }
-
-    .share-url-box input {
-        font-size: 11px;
     }
 
     .paste-actions {
@@ -521,41 +532,8 @@ code {
         width: 100%;
     }
 
-    .lookup-form input {
-        font-size: 16px;
-        max-width: 100%;
-    }
-
     pre {
-        padding: 10px;
         font-size: 12px;
-        margin: 0 -12px;
-        border-radius: 0;
-        border-left: none;
-        border-right: none;
-    }
-
-    .paste-item {
-        padding: 8px 10px;
-    }
-
-    .paste-item-title {
-        font-size: 13px;
-    }
-
-    .empty-state {
-        padding: 24px 12px;
-    }
-}
-
-/* Tablet: 641-768px */
-@media (min-width: 641px) and (max-width: 768px) {
-    main {
-        padding: 16px;
-    }
-
-    .form-row {
-        gap: 10px;
     }
 }
 
