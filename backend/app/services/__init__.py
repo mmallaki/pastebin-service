@@ -60,10 +60,6 @@ class PasteService:
                 await self.delete_paste(paste_id)
                 return None
 
-            paste.views += 1
-            await self.db.commit()
-            await self.db.refresh(paste)
-
             paste_dict = paste.to_dict()
             await redis_client.setex(f"paste:{paste.id}", 300, json.dumps(paste_dict))
 
