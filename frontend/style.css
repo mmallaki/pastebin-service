@@ -20,21 +20,30 @@
     --mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
 body {
     background: var(--bg);
     color: var(--text);
     font-family: var(--font);
     line-height: 1.6;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 24px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--border);
     background: var(--bg-secondary);
+    position: sticky;
+    top: 0;
+    z-index: 50;
 }
 
 .logo {
@@ -44,22 +53,31 @@ nav {
     text-decoration: none;
 }
 
+.nav-links {
+    display: flex;
+    gap: 4px;
+}
+
 .nav-links a {
     color: var(--text-secondary);
     text-decoration: none;
-    margin-left: 20px;
-    font-size: 14px;
-    transition: color 0.2s;
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    white-space: nowrap;
 }
 
-.nav-links a:hover {
+.nav-links a:hover,
+.nav-links a:active {
     color: var(--accent);
+    background: var(--bg-tertiary);
 }
 
 main {
     max-width: 960px;
     margin: 0 auto;
-    padding: 24px;
+    padding: 16px;
 }
 
 .view {
@@ -71,8 +89,8 @@ main {
 }
 
 h2 {
-    font-size: 20px;
-    margin-bottom: 16px;
+    font-size: 18px;
+    margin-bottom: 12px;
     font-weight: 600;
 }
 
@@ -84,9 +102,10 @@ input, select, textarea {
     padding: 10px 12px;
     border-radius: 6px;
     font-family: var(--font);
-    font-size: 14px;
+    font-size: 16px;
     outline: none;
     transition: border-color 0.2s;
+    -webkit-appearance: none;
 }
 
 input:focus, select:focus, textarea:focus {
@@ -98,7 +117,7 @@ textarea {
     resize: vertical;
     tab-size: 4;
     line-height: 1.6;
-    min-height: 300px;
+    min-height: 250px;
 }
 
 textarea::placeholder {
@@ -117,12 +136,13 @@ select {
 
 .form-row {
     display: flex;
-    gap: 12px;
-    margin: 12px 0;
+    gap: 8px;
+    margin: 8px 0;
 }
 
 .form-row select {
     flex: 1;
+    min-width: 0;
 }
 
 #title {
@@ -130,8 +150,8 @@ select {
 }
 
 #content {
-    margin-bottom: 12px;
-    min-height: 400px;
+    margin-bottom: 10px;
+    min-height: 300px;
 }
 
 button {
@@ -144,17 +164,23 @@ button {
     font-weight: 500;
     cursor: pointer;
     transition: background 0.2s;
+    width: 100%;
+    touch-action: manipulation;
 }
 
 button:hover {
     background: var(--accent-hover);
 }
 
+button:active {
+    transform: scale(0.98);
+}
+
 .btn-danger {
     background: transparent;
     color: var(--danger);
     border: 1px solid var(--danger);
-    padding: 6px 12px;
+    padding: 8px 14px;
     font-size: 12px;
 }
 
@@ -167,7 +193,7 @@ button:hover {
     background: transparent;
     color: var(--text-secondary);
     border: 1px solid var(--border);
-    padding: 6px 12px;
+    padding: 8px 14px;
     font-size: 12px;
 }
 
@@ -177,18 +203,20 @@ button:hover {
 }
 
 #paste-header {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 #paste-header h2 {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    word-break: break-word;
 }
 
 .paste-meta {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 13px;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 12px;
     color: var(--text-secondary);
 }
 
@@ -196,7 +224,7 @@ button:hover {
     background: var(--bg-tertiary);
     padding: 2px 8px;
     border-radius: 12px;
-    font-size: 12px;
+    font-size: 11px;
     font-family: var(--mono);
 }
 
@@ -204,36 +232,25 @@ pre {
     background: var(--bg-secondary);
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 16px;
+    padding: 12px;
     overflow-x: auto;
     font-size: 13px;
     line-height: 1.5;
+    -webkit-overflow-scrolling: touch;
 }
 
 code {
     font-family: var(--mono);
     color: var(--text);
+    font-size: 13px;
 }
 
 .search-bar {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .search-bar input {
-    width: 100%;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 12px;
-    border-radius: 6px;
-    font-family: var(--font);
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.search-bar input:focus {
-    border-color: var(--accent);
+    font-size: 16px;
 }
 
 .hljs {
@@ -243,19 +260,25 @@ code {
 
 .paste-actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     margin-top: 8px;
+}
+
+.paste-actions button {
+    width: auto;
+    flex: 1;
 }
 
 .share-box {
     display: flex;
     align-items: center;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 6px;
     margin-top: 8px;
-    padding: 8px 12px;
+    padding: 8px 10px;
     background: var(--bg-tertiary);
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .share-label {
@@ -265,7 +288,7 @@ code {
 
 .share-key {
     font-family: var(--mono);
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--accent);
     letter-spacing: 1px;
@@ -275,11 +298,13 @@ code {
     background: var(--bg-secondary);
     color: var(--text-secondary);
     border: 1px solid var(--border);
-    padding: 4px 10px;
+    padding: 5px 10px;
     border-radius: 4px;
     font-size: 11px;
     cursor: pointer;
     transition: all 0.2s;
+    width: auto;
+    white-space: nowrap;
 }
 
 .btn-small:hover {
@@ -290,21 +315,22 @@ code {
 .share-url-box {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-top: 8px;
+    gap: 6px;
+    margin-top: 6px;
 }
 
 .share-url-box input {
     flex: 1;
     font-family: var(--mono);
-    font-size: 13px;
+    font-size: 12px;
     background: var(--bg-secondary);
     border: 1px solid var(--border);
     color: var(--accent);
-    padding: 8px 12px;
+    padding: 8px 10px;
     border-radius: 6px;
     cursor: pointer;
     outline: none;
+    min-width: 0;
 }
 
 .share-url-box input:focus {
@@ -312,28 +338,28 @@ code {
 }
 
 .share-url-hint {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-secondary);
     white-space: nowrap;
 }
 
 .lookup-hint {
     color: var(--text-secondary);
-    margin-bottom: 16px;
-    font-size: 14px;
+    margin-bottom: 12px;
+    font-size: 13px;
 }
 
 .lookup-hint code {
     background: var(--bg-tertiary);
     padding: 2px 6px;
     border-radius: 3px;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .lookup-form {
     display: flex;
     gap: 8px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .lookup-form input {
@@ -342,20 +368,24 @@ code {
     font-size: 18px;
     letter-spacing: 2px;
     text-align: center;
-    max-width: 300px;
+}
+
+.lookup-form button {
+    width: auto;
+    padding: 10px 20px;
 }
 
 #paste-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .paste-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: 10px 12px;
     background: var(--bg-secondary);
     border: 1px solid var(--border);
     border-radius: 6px;
@@ -363,72 +393,181 @@ code {
     transition: border-color 0.2s;
     text-decoration: none;
     color: inherit;
+    gap: 8px;
 }
 
-.paste-item:hover {
+.paste-item:hover,
+.paste-item:active {
     border-color: var(--accent);
 }
 
 .paste-item-info {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
 }
 
 .paste-item-title {
     font-weight: 500;
-    font-size: 14px;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .paste-item-meta {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-secondary);
 }
 
 .paste-item-lang {
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-secondary);
+    white-space: nowrap;
+    background: var(--bg-tertiary);
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 
 .toast {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
     background: var(--bg-tertiary);
     border: 1px solid var(--border);
     color: var(--text);
-    padding: 12px 20px;
-    border-radius: 6px;
-    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
     opacity: 0;
-    transform: translateY(10px);
     transition: all 0.3s;
     pointer-events: none;
-    z-index: 100;
+    z-index: 200;
+    max-width: 90vw;
+    text-align: center;
 }
 
 .toast.show {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 .empty-state {
     text-align: center;
-    padding: 48px;
+    padding: 32px 16px;
     color: var(--text-secondary);
+    font-size: 14px;
 }
 
+/* Mobile: < 640px */
 @media (max-width: 640px) {
+    nav {
+        padding: 10px 12px;
+    }
+
+    .nav-links a {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    main {
+        padding: 12px;
+    }
+
+    h2 {
+        font-size: 16px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .paste-meta {
+        gap: 4px;
+    }
+
+    .share-box {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .share-url-box {
+        width: 100%;
+    }
+
+    .share-url-box input {
+        font-size: 11px;
+    }
+
+    .paste-actions {
+        flex-direction: column;
+    }
+
+    .paste-actions button {
+        width: 100%;
+    }
+
+    .lookup-form {
+        flex-direction: column;
+    }
+
+    .lookup-form button {
+        width: 100%;
+    }
+
+    .lookup-form input {
+        font-size: 16px;
+        max-width: 100%;
+    }
+
+    pre {
+        padding: 10px;
+        font-size: 12px;
+        margin: 0 -12px;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+
+    .paste-item {
+        padding: 8px 10px;
+    }
+
+    .paste-item-title {
+        font-size: 13px;
+    }
+
+    .empty-state {
+        padding: 24px 12px;
+    }
+}
+
+/* Tablet: 641-768px */
+@media (min-width: 641px) and (max-width: 768px) {
     main {
         padding: 16px;
     }
 
     .form-row {
-        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Safe area for notched phones */
+@supports (padding-top: env(safe-area-inset-top)) {
+    nav {
+        padding-top: max(12px, env(safe-area-inset-top));
+        padding-left: max(16px, env(safe-area-inset-left));
+        padding-right: max(16px, env(safe-area-inset-right));
     }
 
-    .paste-meta {
-        flex-wrap: wrap;
+    .toast {
+        bottom: max(20px, env(safe-area-inset-bottom));
     }
 }
