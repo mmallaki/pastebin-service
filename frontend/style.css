@@ -97,6 +97,13 @@ textarea {
     font-family: var(--mono);
     resize: vertical;
     tab-size: 4;
+    line-height: 1.6;
+    min-height: 300px;
+}
+
+textarea::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
 }
 
 select {
@@ -232,6 +239,80 @@ code {
 .hljs {
     background: transparent !important;
     padding: 0 !important;
+}
+
+.paste-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.share-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.share-label {
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.share-key {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 1px;
+}
+
+.btn-small {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-small:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.lookup-hint {
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.lookup-hint code {
+    background: var(--bg-tertiary);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+.lookup-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.lookup-form input {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-align: center;
+    max-width: 300px;
 }
 
 #paste-list {

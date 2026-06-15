@@ -29,6 +29,7 @@ class PasteUpdate(BaseModel):
 
 class PasteResponse(BaseModel):
     id: str
+    share_key: str
     title: Optional[str]
     content: str
     language: str

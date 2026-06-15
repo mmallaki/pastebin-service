@@ -1,14 +1,22 @@
 from sqlalchemy import Column, String, Text, DateTime, Integer, Boolean, Index
 from sqlalchemy.sql import func
 import uuid
+import secrets
+import string
 
 from app.core.database import Base
+
+
+def generate_share_key():
+    alphabet = string.ascii_lowercase + string.digits
+    return ''.join(secrets.choice(alphabet) for _ in range(8))
 
 
 class Paste(Base):
     __tablename__ = "pastes"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    share_key = Column(String(8), unique=True, index=True, default=generate_share_key)
     title = Column(String(255), nullable=True)
     content = Column(Text, nullable=False)
     language = Column(String(50), default="text")
@@ -31,6 +39,7 @@ class Paste(Base):
 
         return {
             "id": self.id,
+            "share_key": self.share_key,
             "title": self.title,
             "content": self.content,
             "language": self.language,

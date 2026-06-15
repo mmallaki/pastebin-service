@@ -41,6 +41,20 @@ async def get_paste(
     return paste.to_dict()
 
 
+@router.get("/view/{share_key}", response_model=PasteResponse)
+async def get_paste_by_key(
+    share_key: str,
+    db: AsyncSession = Depends(get_db)
+):
+    service = PasteService(db)
+    paste = await service.get_paste_by_share_key(share_key)
+
+    if not paste:
+        raise HTTPException(status_code=404, detail="Paste not found")
+
+    return paste.to_dict()
+
+
 @router.delete("/pastes/{paste_id}", status_code=204)
 async def delete_paste(
     paste_id: str,

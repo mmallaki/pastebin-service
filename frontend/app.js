@@ -1,5 +1,6 @@
 const API = '/api/v1';
 let currentPasteId = null;
+let currentShareKey = null;
 let searchTimer = null;
 
 const LANGUAGES = [
@@ -19,7 +20,26 @@ function init() {
 
     document.getElementById('create-form').addEventListener('submit', handleCreate);
     document.getElementById('edit-form').addEventListener('submit', handleUpdate);
+    document.getElementById('lookup-form').addEventListener('submit', handleLookup);
+
+    setupTabSupport('content');
+    setupTabSupport('edit-content');
+
     showView('create');
+}
+
+function setupTabSupport(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = el.selectionStart;
+            const end = el.selectionEnd;
+            el.value = el.value.substring(0, start) + '    ' + el.value.substring(end);
+            el.selectionStart = el.selectionEnd = start + 4;
+        }
+    });
 }
 
 function showView(name) {
@@ -27,6 +47,7 @@ function showView(name) {
     document.getElementById(`view-${name}`).classList.add('active');
 
     if (name === 'list') loadList();
+    if (name === 'lookup') document.getElementById('lookup-key').focus();
 }
 
 async function handleCreate(e) {
@@ -95,6 +116,30 @@ async function handleUpdate(e) {
     }
 }
 
+async function handleLookup(e) {
+    e.preventDefault();
+    const key = document.getElementById('lookup-key').value.trim().toLowerCase();
+    if (!key) return;
+
+    const result = document.getElementById('lookup-result');
+    result.innerHTML = '<div class="empty-state">Loading...</div>';
+
+    try {
+        const res = await fetch(`${API}/view/${key}`);
+        if (!res.ok) {
+            result.innerHTML = '<div class="empty-state">Paste not found. Check the key and try again.</div>';
+            return;
+        }
+        const paste = await res.json();
+        currentPasteId = paste.id;
+        currentShareKey = paste.share_key;
+        showView('paste');
+        renderPaste(paste);
+    } catch (err) {
+        result.innerHTML = '<div class="empty-state">Failed to look up paste.</div>';
+    }
+}
+
 function startEdit() {
     if (!currentPasteId) return;
     fetch(`${API}/pastes/${currentPasteId}`)
@@ -125,23 +170,43 @@ async function viewPaste(id) {
         const res = await fetch(`${API}/pastes/${id}`);
         if (!res.ok) throw new Error('Paste not found');
         const paste = await res.json();
-
-        document.getElementById('paste-title').textContent = paste.title || 'Untitled';
-        document.getElementById('paste-lang').textContent = paste.language;
-        document.getElementById('paste-date').textContent = formatDate(paste.created_at);
-        document.getElementById('paste-views').textContent = `${paste.views} view${paste.views !== 1 ? 's' : ''}`;
-
-        const codeEl = document.getElementById('paste-code');
-        codeEl.textContent = paste.content;
-        codeEl.className = `language-${paste.language}`;
-
-        if (window.hljs) {
-            hljs.highlightElement(codeEl);
-        }
+        renderPaste(paste);
     } catch (err) {
         showToast(err.message);
         showView('list');
     }
+}
+
+function renderPaste(paste) {
+    currentPasteId = paste.id;
+    currentShareKey = paste.share_key;
+
+    document.getElementById('paste-title').textContent = paste.title || 'Untitled';
+    document.getElementById('paste-lang').textContent = paste.language;
+    document.getElementById('paste-date').textContent = formatDate(paste.created_at);
+    document.getElementById('paste-views').textContent = `${paste.views} view${paste.views !== 1 ? 's' : ''}`;
+    document.getElementById('paste-share-key').textContent = paste.share_key;
+
+    const codeEl = document.getElementById('paste-code');
+    codeEl.textContent = paste.content;
+    codeEl.className = `language-${paste.language}`;
+
+    if (window.hljs) {
+        hljs.highlightElement(codeEl);
+    }
+}
+
+function copyShareKey() {
+    if (!currentShareKey) return;
+    navigator.clipboard.writeText(currentShareKey);
+    showToast('Share key copied');
+}
+
+function copyShareLink() {
+    if (!currentShareKey) return;
+    const url = `${window.location.origin}/view/${currentShareKey}`;
+    navigator.clipboard.writeText(url);
+    showToast('Share link copied');
 }
 
 async function deletePaste() {
@@ -186,7 +251,7 @@ async function loadList() {
                     <span class="paste-item-title">${escapeHtml(p.title || 'Untitled')}</span>
                     <span class="paste-item-meta">${formatDate(p.created_at)} &middot; ${p.views} view${p.views !== 1 ? 's' : ''}</span>
                 </div>
-                <span class="paste-item-lang">${p.language}</span>
+                <span class="paste-item-lang">${p.share_key}</span>
             </a>
         `).join('');
     } catch (err) {

@@ -178,6 +178,28 @@ async def test_create_paste_validation(client):
     assert r.status_code == 422
 
 
+async def test_paste_has_share_key(client):
+    r = await client.post("/api/v1/pastes", json={"content": "share test", "language": "text"})
+    assert r.status_code == 201
+    data = r.json()
+    assert "share_key" in data
+    assert len(data["share_key"]) == 8
+
+
+async def test_get_paste_by_share_key(client):
+    r = await client.post("/api/v1/pastes", json={"content": "key test", "language": "python"})
+    share_key = r.json()["share_key"]
+
+    r = await client.get(f"/api/v1/view/{share_key}")
+    assert r.status_code == 200
+    assert r.json()["content"] == "key test"
+
+
+async def test_get_paste_by_share_key_not_found(client):
+    r = await client.get("/api/v1/view/nonexist1")
+    assert r.status_code == 404
+
+
 async def test_cache_hit(client, test_redis):
     r = await client.post("/api/v1/pastes", json={"content": "cache", "language": "text"})
     paste_id = r.json()["id"]
