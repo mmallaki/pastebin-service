@@ -190,7 +190,7 @@ async def test_cache_invalidation_on_delete(client, test_redis):
 
 
 async def test_rate_limit_headers(client):
-    r = await client.get("/health")
+    r = await client.get("/api/v1/languages")
     assert "x-ratelimit-limit" in r.headers
     assert "x-ratelimit-remaining" in r.headers
 
