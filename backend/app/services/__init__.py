@@ -76,6 +76,13 @@ class PasteService:
         cached = await redis_client.get(f"share:{share_key}")
         if cached:
             paste_data = json.loads(cached)
+            paste_id = paste_data.get("id")
+            if paste_id:
+                await self.db.execute(
+                    Paste.__table__.update().where(Paste.id == paste_id).values(views=Paste.views + 1)
+                )
+                await self.db.commit()
+                paste_data["views"] = paste_data.get("views", 0) + 1
             return Paste(**paste_data)
 
         result = await self.db.execute(
