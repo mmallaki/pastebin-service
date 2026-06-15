@@ -51,13 +51,6 @@ class PasteListResponse(BaseModel):
     per_page: int
 
 
-class HealthResponse(BaseModel):
-    status: str
-    version: str
-    database: str
-    redis: str
-
-
 class StatsResponse(BaseModel):
     total_pastes: int
     active_pastes: int

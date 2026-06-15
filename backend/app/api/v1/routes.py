@@ -8,7 +8,6 @@ from app.schemas import (
     PasteListResponse, StatsResponse
 )
 from app.services import PasteService
-from app.core import settings
 
 router = APIRouter()
 

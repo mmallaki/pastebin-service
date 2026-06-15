@@ -1,36 +1,36 @@
 # Pastebin Service
 
-A comprehensive Pastebin-like service built with FastAPI, PostgreSQL, Redis, and deployed on Kubernetes.
+A Pastebin-like service built with FastAPI, PostgreSQL, Redis, and deployed on Kubernetes.
 
-## Architecture Overview
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                          Kubernetes Cluster                         │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐           │
-│  │  Nginx   │  │  FastAPI │  │ Telegram │  │Prometheus│           │
-│  │ Ingress  │──│  Backend │  │   Bot    │  │+ Grafana │           │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘           │
-│       │             │             │             │                   │
-│  ┌─────────────────────────────────────────────────────────────┐   │
-│  │                    Data Layer                                │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │   │
-│  │  │ PostgreSQL   │  │    Redis     │  │   MinIO/S3   │      │   │
-│  │  │  (Primary)   │  │   (Cache)    │  │  (Optional)  │      │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘      │   │
-│  └─────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────┐
+│                   Kubernetes Cluster               │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐        │
+│  │  Nginx   │──│  FastAPI │  │Prometheus│        │
+│  │ (proxy)  │  │  Backend │  │+ Grafana │        │
+│  └──────────┘  └──────────┘  └──────────┘        │
+│       │             │             │                │
+│  ┌──────────────────────────────────────────┐     │
+│  │              Data Layer                   │     │
+│  │  ┌──────────────┐  ┌──────────────┐      │     │
+│  │  │ PostgreSQL   │  │    Redis     │      │     │
+│  │  │  (Primary)   │  │   (Cache)    │      │     │
+│  │  └──────────────┘  └──────────────┘      │     │
+│  └──────────────────────────────────────────┘     │
+└───────────────────────────────────────────────────┘
 ```
 
 ## Features
 
-- **Paste Management**: Create, read, update, delete pastes
-- **Syntax Highlighting**: Support for 100+ languages via Pygments
+- **Paste Management**: Create, read, delete pastes
+- **Share Keys**: Short 8-char keys for easy sharing
+- **Syntax Highlighting**: 22+ languages via highlight.js
 - **Expiration**: 10min, 1hr, 1day, 1week, never
-- **API Access**: RESTful API for programmatic access
-- **Rate Limiting**: Redis-based rate limiting
-- **Monitoring**: Prometheus metrics + Grafana dashboards
-- **Telegram Bot**: System monitoring and alerts
+- **View Counts**: Tracked per share key access
+- **Rate Limiting**: Redis-based per-IP rate limiting
+- **Monitoring**: Prometheus metrics
 
 ## Quick Start
 
@@ -38,23 +38,21 @@ A comprehensive Pastebin-like service built with FastAPI, PostgreSQL, Redis, and
 # Development
 docker-compose up -d
 
-# Production (Kubernetes)
-helm install pastebin ./deploy/k8s/helm
+# Kubernetes
+./k8s/deploy.sh
 ```
 
 ## API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST   | /api/v1/pastes | Create a paste |
-| GET    | /api/v1/pastes/{id} | Get a paste |
+| POST | /api/v1/pastes | Create a paste |
+| GET | /api/v1/pastes/{id} | Get a paste |
+| GET | /api/v1/pastes | List pastes (with search, language filter) |
+| GET | /api/v1/view/{share_key} | Get paste by share key |
+| GET | /api/v1/stats | Paste statistics |
+| GET | /api/v1/languages | Supported languages |
 | DELETE | /api/v1/pastes/{id} | Delete a paste |
-| GET    | /api/v1/pastes | List pastes |
-| GET    | /health | Health check |
-| GET    | /metrics | Prometheus metrics |
-
-## Documentation
-
-- [API Documentation](docs/api.md)
-- [Deployment Guide](docs/deployment.md)
-- [Iran Hosting Guide](docs/iran-hosting.md)
+| GET | /health | Health check |
+| GET | /metrics | Prometheus metrics |
+| GET | /view/{share_key} | Shareable landing page |

@@ -5,7 +5,6 @@ from typing import List
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Pastebin Service"
     VERSION: str = "1.0.0"
-    API_V1_PREFIX: str = "/api/v1"
 
     # Database
     POSTGRES_SERVER: str = "localhost"
@@ -21,23 +20,12 @@ class Settings(BaseSettings):
     REDIS_DB: int = 0
     REDIS_PASSWORD: str = ""
 
-    # Security
-    SECRET_KEY: str = "your-secret-key-change-in-production"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    # CORS
     CORS_ORIGINS: List[str] = ["*"]
 
     # Rate Limiting
     RATE_LIMIT_PER_MINUTE: int = 60
     RATE_LIMIT_PER_HOUR: int = 1000
-
-    # Paste Settings
-    MAX_PASTE_SIZE: int = 1024 * 1024  # 1MB
-    DEFAULT_EXPIRATION: str = "never"
-    ALLOWED_EXPIRATIONS: List[str] = ["10min", "1hr", "1day", "1week", "never"]
-
-    # Telegram Bot
-    TELEGRAM_BOT_TOKEN: str = ""
-    TELEGRAM_CHAT_ID: str = ""
 
     # Monitoring
     PROMETHEUS_ENABLED: bool = True
@@ -45,6 +33,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "ignore"
 
     def __init__(self, **values):
         super().__init__(**values)

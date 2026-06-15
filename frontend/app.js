@@ -91,25 +91,6 @@ async function handleCreate(e) {
     }
 }
 
-async function handleUpdate(e) {
-    e.preventDefault();
-    if (!currentPasteId) return;
-    try {
-        const res = await fetch(`${API}/pastes/${currentPasteId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                title: document.getElementById('edit-title').value || null,
-                content: document.getElementById('edit-content').value,
-                language: document.getElementById('edit-language').value,
-            }),
-        });
-        if (!res.ok) throw new Error('Failed to update');
-        showToast('Saved');
-        location.hash = 'paste-' + currentPasteId;
-    } catch (err) { showToast(err.message); }
-}
-
 async function handleLookup(e) {
     e.preventDefault();
     const key = document.getElementById('lookup-key').value.trim().toLowerCase();
@@ -122,23 +103,6 @@ async function handleLookup(e) {
         const p = await res.json();
         location.hash = 'paste-' + p.id;
     } catch { r.innerHTML = '<div class="empty-state">Error</div>'; }
-}
-
-function startEdit() {
-    if (!currentPasteId) return;
-    fetch(`${API}/pastes/${currentPasteId}`).then(r => r.json()).then(p => {
-        document.getElementById('edit-title').value = p.title || '';
-        document.getElementById('edit-content').value = p.content;
-        const sel = document.getElementById('edit-language');
-        sel.innerHTML = '';
-        LANGUAGES.forEach(l => {
-            const o = document.createElement('option');
-            o.value = l; o.textContent = l;
-            if (l === p.language) o.selected = true;
-            sel.appendChild(o);
-        });
-        show('edit');
-    });
 }
 
 function viewPaste(id) {
