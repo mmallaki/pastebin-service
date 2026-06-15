@@ -11,14 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 </head>
 <body>
-    <nav>
-        <a href="#" class="logo" onclick="showView('home')">Pastebin</a>
-        <div class="nav-links">
-            <a href="#" onclick="showView('create')">New Paste</a>
-            <a href="#" onclick="showView('lookup')">View by Key</a>
-        </div>
-    </nav>
-
     <main id="app">
         <section id="view-home" class="view active">
             <div class="hero">
@@ -33,6 +25,9 @@
 
         <section id="view-create" class="view">
             <div class="editor-box">
+                <textarea id="content" placeholder="Write or paste your code here..." rows="12" spellcheck="false"></textarea>
+            </div>
+            <div class="editor-options">
                 <input type="text" id="title" placeholder="Title (optional)" maxlength="255">
                 <div class="form-row">
                     <select id="language"></select>
@@ -44,8 +39,10 @@
                         <option value="1week">1 Week</option>
                     </select>
                 </div>
-                <textarea id="content" placeholder="Write or paste your code here..." rows="16" spellcheck="false"></textarea>
-                <button type="submit" id="create-btn" onclick="handleCreate(event)">Create Paste</button>
+                <div class="form-row">
+                    <button type="submit" id="create-btn" onclick="handleCreate(event)">Create Paste</button>
+                    <button class="btn-outline" onclick="showView('home')">Back</button>
+                </div>
             </div>
         </section>
 
@@ -70,6 +67,7 @@
                 <div class="paste-actions">
                     <button class="btn-secondary" onclick="startEdit()">Edit</button>
                     <button class="btn-danger" onclick="deletePaste()">Delete</button>
+                    <button class="btn-outline" onclick="showView('home')">Back</button>
                 </div>
             </div>
             <div class="editor-box">
@@ -79,14 +77,16 @@
 
         <section id="view-edit" class="view">
             <div class="editor-box">
+                <textarea id="edit-content" rows="12" spellcheck="false"></textarea>
+            </div>
+            <div class="editor-options">
                 <input type="text" id="edit-title" placeholder="Title (optional)" maxlength="255">
                 <div class="form-row">
                     <select id="edit-language"></select>
                 </div>
-                <textarea id="edit-content" rows="16" spellcheck="false"></textarea>
                 <div class="form-row">
                     <button type="submit" onclick="handleUpdate(event)">Save</button>
-                    <button type="button" class="btn-outline" onclick="viewPaste(currentPasteId)">Cancel</button>
+                    <button class="btn-outline" onclick="viewPaste(currentPasteId)">Cancel</button>
                 </div>
             </div>
         </section>
@@ -99,6 +99,7 @@
                     <button type="submit">View</button>
                 </form>
                 <div id="lookup-result"></div>
+                <button class="btn-outline" style="margin-top:12px" onclick="showView('home')">Back</button>
             </div>
         </section>
     </main>
