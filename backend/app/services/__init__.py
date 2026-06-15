@@ -45,11 +45,6 @@ class PasteService:
         return paste
 
     async def get_paste(self, paste_id: str) -> Paste | None:
-        cached = await redis_client.get(f"paste:{paste_id}")
-        if cached:
-            paste_data = json.loads(cached)
-            return Paste(**paste_data)
-
         result = await self.db.execute(
             select(Paste).where(Paste.id == paste_id)
         )
