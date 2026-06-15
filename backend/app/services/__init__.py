@@ -61,24 +61,6 @@ class PasteService:
         return paste
 
     async def get_paste_by_share_key(self, share_key: str) -> Paste | None:
-        cached = await redis_client.get(f"share:{share_key}")
-        if cached:
-            paste_data = json.loads(cached)
-            paste_id = paste_data.get("id")
-            if paste_id:
-                result = await self.db.execute(
-                    Paste.__table__.update()
-                    .where(Paste.id == paste_id)
-                    .values(views=Paste.views + 1)
-                    .returning(Paste.views)
-                )
-                new_views = result.scalar()
-                if new_views is not None:
-                    paste_data["views"] = new_views
-                await self.db.commit()
-                await redis_client.setex(f"share:{share_key}", 300, json.dumps(paste_data))
-            return Paste(**paste_data)
-
         result = await self.db.execute(
             select(Paste).where(Paste.share_key == share_key)
         )
@@ -92,9 +74,6 @@ class PasteService:
             paste.views += 1
             await self.db.commit()
             await self.db.refresh(paste)
-
-            paste_dict = paste.to_dict()
-            await redis_client.setex(f"share:{share_key}", 300, json.dumps(paste_dict))
 
         return paste
 
