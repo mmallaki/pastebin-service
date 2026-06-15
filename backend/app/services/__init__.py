@@ -107,9 +107,11 @@ class PasteService:
         paste = result.scalar_one_or_none()
 
         if paste:
+            share_key = paste.share_key
             await self.db.delete(paste)
             await self.db.commit()
             await redis_client.delete(f"paste:{paste_id}")
+            await redis_client.delete(f"share:{share_key}")
             return True
 
         return False

@@ -106,7 +106,12 @@ async def view_share(share_key: str):
 <pre><code id="paste-code"></code></pre>
 </div>
 </div>
-<div id="not-found" style="display:none" class="empty-state">Paste not found or expired.</div>
+<div id="not-found" style="display:none;text-align:center;padding:40px 16px">
+<div style="font-size:48px;margin-bottom:16px">?</div>
+<h2 style="color:var(--text);margin-bottom:8px">Paste not found</h2>
+<p style="color:var(--dim);font-size:14px;margin-bottom:24px">This paste may have been deleted or expired.</p>
+<a href="/static/index.html" style="display:inline-block;background:var(--accent);color:#fff;border:none;padding:10px 24px;border-radius:6px;font-size:14px;text-decoration:none">Create New Paste</a>
+</div>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script>

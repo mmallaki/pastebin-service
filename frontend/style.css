@@ -152,7 +152,7 @@ h2{font-size:18px;font-weight:600;margin-bottom:6px;word-break:break-word}
 /* Lookup */
 .lookup-row{display:flex;gap:8px;margin-bottom:12px}
 .lookup-row input{flex:1;font-family:var(--mono);font-size:18px;letter-spacing:2px;text-align:center}
-.lookup-row button{width:auto;padding:10px 24px}
+.lookup-row button{width:auto;padding:10px 24px;font-size:14px}
 
 /* Toast */
 .toast{
