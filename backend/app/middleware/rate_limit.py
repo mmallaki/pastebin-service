@@ -9,6 +9,9 @@ from app.core import settings
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
+        if request.url.path in ("/health", "/metrics"):
+            return await call_next(request)
+
         client_ip = request.client.host
         now = datetime.utcnow()
 
