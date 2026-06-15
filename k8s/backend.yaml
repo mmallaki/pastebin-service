@@ -17,61 +17,15 @@ spec:
     spec:
       containers:
         - name: backend
-          image: pastebin-backend:latest
-          imagePullPolicy: Never
+          image: mmallaki13/pastebin-backend:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
-          env:
-            - name: POSTGRES_SERVER
-              valueFrom:
-                secretKeyRef:
-                  name: pastebin-secrets
-                  key: POSTGRES_SERVER
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: pastebin-secrets
-                  key: POSTGRES_USER
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: pastebin-secrets
-                  key: POSTGRES_PASSWORD
-            - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: pastebin-secrets
-                  key: POSTGRES_DB
-            - name: POSTGRES_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: pastebin-config
-                  key: POSTGRES_PORT
-            - name: REDIS_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: pastebin-secrets
-                  key: REDIS_HOST
-            - name: REDIS_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: pastebin-config
-                  key: REDIS_PORT
-            - name: RATE_LIMIT_PER_MINUTE
-              valueFrom:
-                configMapKeyRef:
-                  name: pastebin-config
-                  key: RATE_LIMIT_PER_MINUTE
-            - name: RATE_LIMIT_PER_HOUR
-              valueFrom:
-                configMapKeyRef:
-                  name: pastebin-config
-                  key: RATE_LIMIT_PER_HOUR
-            - name: PROMETHEUS_ENABLED
-              valueFrom:
-                configMapKeyRef:
-                  name: pastebin-config
-                  key: PROMETHEUS_ENABLED
+          envFrom:
+            - secretRef:
+                name: pastebin-secrets
+            - configMapRef:
+                name: pastebin-config
           readinessProbe:
             httpGet:
               path: /health
