@@ -22,7 +22,20 @@ function init() {
     setupTabSupport('content');
     setupTabSupport('edit-content');
 
-    showView('home');
+    window.addEventListener('popstate', (e) => {
+        if (e.state && e.state.view) {
+            showView(e.state.view, false);
+        } else {
+            showView('home', false);
+        }
+    });
+
+    const hash = window.location.hash.replace('#', '');
+    if (hash && document.getElementById(`view-${hash}`)) {
+        showView(hash, false);
+    } else {
+        showView('home', false);
+    }
 }
 
 function setupTabSupport(id) {
@@ -39,9 +52,14 @@ function setupTabSupport(id) {
     });
 }
 
-function showView(name) {
+function showView(name, push = true) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(`view-${name}`).classList.add('active');
+    const el = document.getElementById(`view-${name}`);
+    if (el) el.classList.add('active');
+
+    if (push) {
+        history.pushState({ view: name }, '', `#${name}`);
+    }
 
     if (name === 'create') {
         setTimeout(() => document.getElementById('content').focus(), 100);
@@ -49,6 +67,14 @@ function showView(name) {
     if (name === 'lookup') {
         setTimeout(() => document.getElementById('lookup-key').focus(), 100);
     }
+}
+
+function navigateTo(name) {
+    showView(name, true);
+}
+
+function goBack() {
+    history.back();
 }
 
 async function handleCreate(e) {
@@ -104,7 +130,6 @@ async function handleUpdate(e) {
 
         if (!res.ok) throw new Error('Failed to update');
         showToast('Paste updated');
-        showView('paste');
         viewPaste(currentPasteId);
     } catch (err) {
         showToast(err.message);

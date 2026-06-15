@@ -15,17 +15,21 @@
         <section id="view-home" class="view active">
             <div class="hero">
                 <h1 class="hero-title">Pastebin</h1>
-                <p class="hero-desc">Share code, notes, and text snippets with a simple link.</p>
+                <p class="hero-desc">Share code, notes, and text snippets<br>with a simple link.</p>
                 <div class="hero-actions">
-                    <button onclick="showView('create')">New Paste</button>
-                    <button class="btn-outline" onclick="showView('lookup')">View Paste</button>
+                    <button onclick="navigateTo('create')">New Paste</button>
+                    <button class="btn-outline" onclick="navigateTo('lookup')">View Paste</button>
                 </div>
             </div>
         </section>
 
         <section id="view-create" class="view">
-            <div class="editor-box">
-                <textarea id="content" placeholder="Write or paste your code here..." rows="12" spellcheck="false"></textarea>
+            <div class="page-header">
+                <button class="btn-back" onclick="goBack()">&larr; Back</button>
+                <h2>New Paste</h2>
+            </div>
+            <div class="paste-box">
+                <textarea id="content" placeholder="Write or paste your code here..." rows="10" spellcheck="false"></textarea>
             </div>
             <div class="editor-options">
                 <input type="text" id="title" placeholder="Title (optional)" maxlength="255">
@@ -39,67 +43,68 @@
                         <option value="1week">1 Week</option>
                     </select>
                 </div>
-                <div class="form-row">
-                    <button type="submit" id="create-btn" onclick="handleCreate(event)">Create Paste</button>
-                    <button class="btn-outline" onclick="showView('home')">Back</button>
-                </div>
+                <button type="submit" id="create-btn" onclick="handleCreate(event)">Create Paste</button>
             </div>
         </section>
 
         <section id="view-paste" class="view">
-            <div id="paste-header">
+            <div class="page-header">
+                <button class="btn-back" onclick="goBack()">&larr; Back</button>
                 <h2 id="paste-title"></h2>
-                <div class="paste-meta">
-                    <span id="paste-lang" class="badge"></span>
-                    <span id="paste-date"></span>
-                    <span id="paste-views"></span>
-                </div>
-                <div id="paste-share" class="share-box">
-                    <span class="share-label">Share key:</span>
-                    <code id="paste-share-key" class="share-key"></code>
-                    <button class="btn-small" onclick="copyShareKey()">Copy Key</button>
-                    <button class="btn-small" onclick="copyShareLink()">Copy Link</button>
-                </div>
-                <div class="share-url-box">
-                    <input type="text" id="paste-share-url" readonly onclick="this.select(); copyShareLink()">
-                    <span class="share-url-hint">click to copy</span>
-                </div>
-                <div class="paste-actions">
-                    <button class="btn-secondary" onclick="startEdit()">Edit</button>
-                    <button class="btn-danger" onclick="deletePaste()">Delete</button>
-                    <button class="btn-outline" onclick="showView('home')">Back</button>
-                </div>
             </div>
-            <div class="editor-box">
+            <div class="paste-meta">
+                <span id="paste-lang" class="badge"></span>
+                <span id="paste-date"></span>
+                <span id="paste-views"></span>
+            </div>
+            <div class="share-box">
+                <span class="share-label">Share:</span>
+                <code id="paste-share-key" class="share-key"></code>
+                <button class="btn-small" onclick="copyShareKey()">Copy Key</button>
+                <button class="btn-small" onclick="copyShareLink()">Copy Link</button>
+            </div>
+            <div class="share-url-box">
+                <input type="text" id="paste-share-url" readonly onclick="this.select(); copyShareLink()">
+                <span class="share-url-hint">tap to copy</span>
+            </div>
+            <div class="paste-box">
                 <pre><code id="paste-code"></code></pre>
+            </div>
+            <div class="paste-actions">
+                <button class="btn-secondary" onclick="startEdit()">Edit</button>
+                <button class="btn-danger" onclick="deletePaste()">Delete</button>
             </div>
         </section>
 
         <section id="view-edit" class="view">
-            <div class="editor-box">
-                <textarea id="edit-content" rows="12" spellcheck="false"></textarea>
+            <div class="page-header">
+                <button class="btn-back" onclick="goBack()">&larr; Back</button>
+                <h2>Edit Paste</h2>
+            </div>
+            <div class="paste-box">
+                <textarea id="edit-content" rows="10" spellcheck="false"></textarea>
             </div>
             <div class="editor-options">
                 <input type="text" id="edit-title" placeholder="Title (optional)" maxlength="255">
                 <div class="form-row">
                     <select id="edit-language"></select>
                 </div>
-                <div class="form-row">
-                    <button type="submit" onclick="handleUpdate(event)">Save</button>
-                    <button class="btn-outline" onclick="viewPaste(currentPasteId)">Cancel</button>
-                </div>
+                <button type="submit" onclick="handleUpdate(event)">Save</button>
             </div>
         </section>
 
         <section id="view-lookup" class="view">
-            <div class="editor-box">
+            <div class="page-header">
+                <button class="btn-back" onclick="goBack()">&larr; Back</button>
+                <h2>View Paste</h2>
+            </div>
+            <div class="paste-box">
                 <p class="lookup-hint">Enter a share key to view a paste</p>
                 <form id="lookup-form" class="lookup-form">
-                    <input type="text" id="lookup-key" placeholder="e.g. abc123xy" maxlength="8" autocomplete="off" autofocus>
+                    <input type="text" id="lookup-key" placeholder="abc123xy" maxlength="8" autocomplete="off" autofocus>
                     <button type="submit">View</button>
                 </form>
                 <div id="lookup-result"></div>
-                <button class="btn-outline" style="margin-top:12px" onclick="showView('home')">Back</button>
             </div>
         </section>
     </main>

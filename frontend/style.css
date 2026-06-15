@@ -19,9 +19,8 @@
     --mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
 }
 
-html {
-    -webkit-text-size-adjust: 100%;
-    -webkit-tap-highlight-color: transparent;
+html, body {
+    height: 100%;
 }
 
 body {
@@ -29,7 +28,6 @@ body {
     color: var(--text);
     font-family: var(--font);
     line-height: 1.6;
-    min-height: 100vh;
     overflow-x: hidden;
 }
 
@@ -47,31 +45,29 @@ main {
     display: block;
 }
 
-/* Home / Hero */
+/* Home / Hero — truly centered */
 .hero {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    height: calc(100vh - 32px);
     text-align: center;
-    padding: 16px;
-    margin: -16px;
 }
 
 .hero-title {
-    font-size: 56px;
+    font-size: 52px;
     font-weight: 700;
     color: var(--text);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     letter-spacing: -1px;
 }
 
 .hero-desc {
     font-size: 16px;
     color: var(--text-secondary);
-    margin-bottom: 36px;
-    max-width: 360px;
+    margin-bottom: 40px;
+    line-height: 1.5;
 }
 
 .hero-actions {
@@ -81,49 +77,80 @@ main {
 
 .hero-actions button {
     width: auto;
-    padding: 12px 36px;
+    padding: 12px 40px;
     font-size: 15px;
 }
 
-/* Editor box — inset hollow look */
-.editor-box {
+/* Page header with back button */
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.page-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.btn-back {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    width: auto;
+    flex-shrink: 0;
+}
+
+.btn-back:hover {
+    border-color: var(--text-secondary);
+    color: var(--text);
+    background: var(--bg-tertiary);
+}
+
+/* Paste box — inset sunken look */
+.paste-box {
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 14px;
-    margin-bottom: 12px;
+    padding: 12px;
+    margin-bottom: 16px;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-.editor-box textarea {
+.paste-box textarea {
     width: 100%;
     background: var(--bg-secondary);
-    border: 1px solid var(--border);
+    border: none;
     color: var(--text);
-    padding: 12px;
-    border-radius: 6px;
+    padding: 10px;
+    border-radius: 4px;
     font-family: var(--mono);
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1.5;
     resize: vertical;
     tab-size: 4;
-    min-height: 200px;
+    min-height: 150px;
     outline: none;
-    transition: border-color 0.2s;
-    -webkit-appearance: none;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.editor-box textarea:focus {
-    border-color: var(--accent);
+.paste-box textarea:focus {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--accent);
 }
 
-.editor-box textarea::placeholder {
+.paste-box textarea::placeholder {
     color: var(--text-secondary);
-    opacity: 0.6;
+    opacity: 0.5;
 }
 
-/* Editor options — below the box */
+/* Editor options — minimal below the box */
 .editor-options {
-    padding: 0 4px;
+    padding: 0 2px;
+    margin-bottom: 12px;
 }
 
 .editor-options input {
@@ -145,11 +172,10 @@ main {
     border-color: var(--accent);
 }
 
-/* Form elements */
 .form-row {
     display: flex;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 select {
@@ -216,8 +242,6 @@ button:active {
     background: transparent;
     color: var(--danger);
     border: 1px solid var(--danger);
-    padding: 8px 14px;
-    font-size: 12px;
 }
 
 .btn-danger:hover {
@@ -229,8 +253,6 @@ button:active {
     background: transparent;
     color: var(--text-secondary);
     border: 1px solid var(--border);
-    padding: 8px 14px;
-    font-size: 12px;
 }
 
 .btn-secondary:hover {
@@ -239,17 +261,6 @@ button:active {
 }
 
 /* Paste view */
-#paste-header {
-    margin-bottom: 12px;
-}
-
-#paste-header h2 {
-    font-size: 18px;
-    margin-bottom: 6px;
-    word-break: break-word;
-    font-weight: 600;
-}
-
 .paste-meta {
     display: flex;
     align-items: center;
@@ -257,6 +268,7 @@ button:active {
     gap: 6px;
     font-size: 12px;
     color: var(--text-secondary);
+    margin-bottom: 12px;
 }
 
 .badge {
@@ -291,12 +303,11 @@ code {
 /* Share */
 .paste-actions {
     display: flex;
-    gap: 6px;
-    margin-top: 8px;
+    gap: 8px;
+    margin-bottom: 16px;
 }
 
 .paste-actions button {
-    width: auto;
     flex: 1;
 }
 
@@ -305,7 +316,7 @@ code {
     align-items: center;
     flex-wrap: wrap;
     gap: 6px;
-    margin-top: 8px;
+    margin-bottom: 8px;
     padding: 8px 10px;
     background: var(--bg-tertiary);
     border-radius: 6px;
@@ -329,7 +340,7 @@ code {
     background: var(--bg-secondary);
     color: var(--text-secondary);
     border: 1px solid var(--border);
-    padding: 5px 10px;
+    padding: 4px 10px;
     border-radius: 4px;
     font-size: 11px;
     cursor: pointer;
@@ -347,7 +358,7 @@ code {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-top: 6px;
+    margin-bottom: 12px;
 }
 
 .share-url-box input {
@@ -449,13 +460,16 @@ code {
         padding: 12px;
     }
 
+    .hero {
+        height: calc(100vh - 24px);
+    }
+
     .hero-title {
         font-size: 36px;
     }
 
     .hero-desc {
         font-size: 14px;
-        margin-bottom: 28px;
     }
 
     .hero-actions {
@@ -468,12 +482,12 @@ code {
         width: 100%;
     }
 
-    .editor-box {
-        padding: 10px;
+    .paste-box {
+        padding: 8px;
     }
 
-    .editor-box textarea {
-        min-height: 180px;
+    .paste-box textarea {
+        min-height: 120px;
         font-size: 13px;
     }
 
