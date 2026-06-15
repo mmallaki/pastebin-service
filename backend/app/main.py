@@ -79,26 +79,26 @@ async def view_share(share_key: str):
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#080c10">
 <title>Paste - {share_key}</title>
-<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/style.css?v=3">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 </head>
 <body>
-<nav>
-<a href="/" class="logo">Pastebin</a>
-<div class="nav-links"><a href="/static/index.html">New Paste</a></div>
-</nav>
-<main id="app" style="max-width:960px;margin:0 auto;padding:24px">
+<main style="max-width:640px;margin:0 auto;padding:0 16px;padding-top:24px">
 <div id="loading" class="empty-state">Loading paste...</div>
 <div id="paste-view" style="display:none">
+<a class="back" href="/static/index.html">&larr; Home</a>
 <h2 id="paste-title"></h2>
-<div class="paste-meta">
+<div class="meta">
 <span id="paste-lang" class="badge"></span>
 <span id="paste-date"></span>
 <span id="paste-views"></span>
 </div>
+<div class="sunken">
 <pre><code id="paste-code"></code></pre>
+</div>
 </div>
 <div id="not-found" style="display:none" class="empty-state">Paste not found or expired.</div>
 </main>
