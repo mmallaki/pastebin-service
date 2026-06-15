@@ -143,18 +143,14 @@ function startEdit() {
 
 function viewPaste(id) {
     currentPasteId = id;
-    if (currentShareKey) {
-        fetch(`${API}/view/${currentShareKey}`).then(r => r.json()).then(p => {
-            renderPaste(p);
-            show('paste');
-        }).catch(() => { showToast('Not found'); go('home'); });
-    } else {
-        fetch(`${API}/pastes/${id}`).then(r => r.json()).then(p => {
-            currentShareKey = p.share_key;
-            renderPaste(p);
-            show('paste');
-        }).catch(() => { showToast('Not found'); go('home'); });
-    }
+    fetch(`${API}/pastes/${id}`).then(r => {
+        if (!r.ok) throw new Error();
+        return r.json();
+    }).then(p => {
+        currentShareKey = p.share_key;
+        renderPaste(p);
+        show('paste');
+    }).catch(() => { showToast('Not found'); go('home'); });
 }
 
 function copyToClipboard(text) {
