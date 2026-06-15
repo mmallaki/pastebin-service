@@ -39,6 +39,34 @@ main{max-width:640px;margin:0 auto;padding:0 16px}
 .page{display:none}
 .page.active{display:block}
 
+/* ===== HOME ===== */
+#page-home .center-box{
+  border-left:2px solid rgba(63,185,80,0.15);
+}
+
+/* ===== CREATE ===== */
+#create{padding-top:24px}
+#create .sunken{border-color:rgba(63,185,80,0.2)}
+
+/* ===== PASTE VIEW ===== */
+#page-paste{padding-top:24px}
+#page-paste h2{color:var(--accent)}
+#page-paste .sunken{
+  border-color:rgba(63,185,80,0.25);
+  background:rgba(8,12,16,0.8);
+}
+#page-paste .meta{border-bottom:1px solid var(--border);padding-bottom:10px}
+
+/* ===== EDIT ===== */
+#page-edit{padding-top:24px}
+#page-edit h2{color:var(--accent2)}
+#page-edit .sunken{border-color:rgba(86,211,100,0.2)}
+
+/* ===== LOOKUP ===== */
+#page-lookup .center-box{
+  border-left:2px solid rgba(63,185,80,0.1);
+}
+
 /* Center box for home & lookup */
 .center-box{
   display:flex;flex-direction:column;align-items:center;
@@ -46,6 +74,7 @@ main{max-width:640px;margin:0 auto;padding:0 16px}
   min-height:100vh;padding-top:28vh;
 }
 .center-box h1{font-size:48px;font-weight:700;margin-bottom:8px;letter-spacing:-1px}
+.center-box h2{font-size:28px;font-weight:600;margin-bottom:8px;color:var(--text)}
 .center-box p{color:var(--dim);margin-bottom:32px;font-size:15px}
 .center-box button{width:auto;padding:12px 40px;margin-bottom:10px}
 .center-box .btn-outline{background:transparent;color:var(--dim);border:1px solid var(--border)}
@@ -61,7 +90,7 @@ main{max-width:640px;margin:0 auto;padding:0 16px}
 /* Sunken paste box */
 .sunken{
   background:var(--bg);border:1px solid var(--border);border-radius:8px;
-  padding:10px;margin-bottom:12px;
+  padding:12px;margin-bottom:12px;
   box-shadow:inset 0 2px 8px rgba(0,0,0,0.4);
 }
 .sunken textarea{
@@ -86,7 +115,7 @@ input[type=text],select{
 input:focus,select:focus{border-color:var(--accent)}
 select{
   cursor:pointer;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath fill='%238b949e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath fill='%235a7a60' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;
 }
 
@@ -98,7 +127,7 @@ select{
 button{
   background:var(--accent);color:#fff;border:none;padding:10px 20px;
   border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;
-  width:100%;touch-action:manipulation;transition:background .2s;
+  width:100%;touch-action:manipuation;transition:all .2s;
 }
 button:hover{background:var(--accent2)}
 button:active{transform:scale(.98)}
@@ -112,7 +141,7 @@ button:active{transform:scale(.98)}
 /* Paste view */
 h2{font-size:18px;font-weight:600;margin-bottom:6px;word-break:break-word}
 .meta{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--dim);margin-bottom:10px}
-.badge{background:var(--bg3);padding:2px 8px;border-radius:12px;font-size:11px;font-family:var(--mono)}
+.badge{background:var(--bg3);padding:2px 8px;border-radius:12px;font-size:11px;font-family:var(--mono);color:var(--accent)}
 .share-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;padding:8px 10px;background:var(--bg3);border-radius:6px;font-size:12px}
 .share-row code{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--accent);letter-spacing:1px}
 .share-row .sm{margin-left:auto}
@@ -131,7 +160,7 @@ h2{font-size:18px;font-weight:600;margin-bottom:6px;word-break:break-word}
 .toast{
   position:fixed;bottom:20px;left:50%;
   transform:translateX(-50%) translateY(20px);
-  background:var(--bg3);border:1px solid var(--border);color:var(--text);
+  background:var(--bg3);border:1px solid var(--accent);color:var(--accent);
   padding:10px 20px;border-radius:8px;font-size:13px;
   opacity:0;transition:all .3s;pointer-events:none;z-index:200;
   max-width:90vw;text-align:center;
@@ -144,6 +173,7 @@ h2{font-size:18px;font-weight:600;margin-bottom:6px;word-break:break-word}
   main{padding:0 12px}
   .center-box{padding-top:24vh}
   .center-box h1{font-size:32px}
+  .center-box h2{font-size:22px}
   .center-box p{font-size:13px}
   .center-box button{width:100%;max-width:240px}
   .row{flex-direction:column}
