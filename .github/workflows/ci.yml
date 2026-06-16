@@ -34,8 +34,6 @@ jobs:
 
       - name: Run tests
         working-directory: backend
-        env:
-          PYTHONPATH: backend
         run: python -m pytest tests/ -v
 
   build:

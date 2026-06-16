@@ -20,7 +20,7 @@ class PasteCreate(BaseModel):
     title: Optional[str] = Field(None, max_length=255)
     content: str = Field(..., min_length=1, max_length=1048576)  # max 1MB
     language: str = Field("text", max_length=50)
-    expiration: ExpirationType = ExpirationType.NEVER
+    expiration: ExpirationType = ExpirationType.ONE_DAY
 
 
 class PasteResponse(BaseModel):

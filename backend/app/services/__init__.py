@@ -50,25 +50,7 @@ class PasteService:
         paste = result.scalar_one_or_none()
 
         if paste:
-            if paste.expires_at and paste.expires_at < datetime.now(timezone.utc):
-                await self.delete_paste(paste_id)
-                return None
-
-            paste.views += 1
-            await self.db.commit()
-            await self.db.refresh(paste)
-
-        return paste
-
-    async def get_paste_by_share_key(self, share_key: str) -> Paste | None:
-        """Fetch paste by share key. Increments view count. Deletes if expired."""
-        result = await self.db.execute(
-            select(Paste).where(Paste.share_key == share_key)
-        )
-        paste = result.scalar_one_or_none()
-
-        if paste:
-            if paste.expires_at and paste.expires_at < datetime.now(timezone.utc):
+            if paste.expires_at and paste.expires_at.replace(tzinfo=None) < datetime.now(timezone.utc).replace(tzinfo=None):
                 await self.delete_paste(paste.id)
                 return None
 
@@ -94,6 +76,24 @@ class PasteService:
             return True
 
         return False
+
+    async def get_paste_by_share_key(self, share_key: str) -> Paste | None:
+        """Fetch paste by share key. Increments view count. Deletes if expired."""
+        result = await self.db.execute(
+            select(Paste).where(Paste.share_key == share_key)
+        )
+        paste = result.scalar_one_or_none()
+
+        if paste:
+            if paste.expires_at and paste.expires_at.replace(tzinfo=None) < datetime.now(timezone.utc).replace(tzinfo=None):
+                await self.delete_paste(paste.id)
+                return None
+
+            paste.views += 1
+            await self.db.commit()
+            await self.db.refresh(paste)
+
+        return paste
 
     async def list_pastes(
         self,
